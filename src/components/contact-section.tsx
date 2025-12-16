@@ -8,12 +8,6 @@ const contactLinks = [
     icon: Mail,
   },
   {
-    name: "Téléphone",
-    value: "+33 7 68 22 94 30",
-    href: "tel:+33768229430",
-    icon: Phone,
-  },
-  {
     name: "LinkedIn",
     value: "linkedin.com/in/yoann-corgnet",
     href: "https://linkedin.com/in/yoann-corgnet",
