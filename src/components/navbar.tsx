@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./theme-toggle"
+import Link from "next/link"
+import Image from "next/image";
 
 export interface NavLink {
   name: string;
@@ -31,7 +31,18 @@ export function Navbar({ links }: NavbarProps) {
         isScrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : ""
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 py-4">
+      <div className="max-w-6xl mx-auto px-16 py-4 flex items-center justify-between">
+        <Link href='/' className="font-bold text-xl hover:text-primary transition-colors">
+          <Image
+              src="/logo.svg"
+              alt="Portfolio Logo"
+              width={120}
+              height={40}
+              priority
+              className="h-10 w-auto"
+            />
+        </Link>
+        
         <nav className="flex items-center justify-end gap-4">
           {/* Desktop navigation */}
           {links.length > 0 && (
