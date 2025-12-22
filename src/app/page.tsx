@@ -17,15 +17,17 @@ const navLinks = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background">
+    <>
       <Navbar links={ navLinks } />
-      <HeroSection />
-      <AboutSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ExperienceSection />
-      <ContactSection />
+      <main className="min-h-screen bg-background">
+        <HeroSection />
+        <AboutSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ExperienceSection />
+        <ContactSection />
+      </main>
       <Footer />
-    </main>
+    </>
   )
 }

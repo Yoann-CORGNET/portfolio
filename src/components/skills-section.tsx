@@ -30,8 +30,8 @@ const skillCategories = [
 
 export function SkillsSection() {
   return (
-    <section id="skills" className="py-24 px-6 bg-card/50">
-      <div className="max-w-6xl mx-auto">
+    <section id="skills" className="py-24 bg-card/50">
+      <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="flex items-center gap-3 mb-12">
           <span className="text-primary text-xl">{"#"}</span>

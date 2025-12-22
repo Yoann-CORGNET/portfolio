@@ -31,7 +31,7 @@ export function Navbar({ links }: NavbarProps) {
         isScrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : ""
       }`}
     >
-      <div className="max-w-6xl mx-auto px-16 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-16 py-4 flex items-center justify-between">
         <Link href='/' className="font-bold text-xl hover:text-primary transition-colors">
           <Image
               src="/logo.svg"
