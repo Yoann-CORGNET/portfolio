@@ -1,30 +1,31 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Github, ExternalLink, CheckCircle2, Slice, ParkingMeter } from "lucide-react"
+import { ArrowLeft, Github, ExternalLink, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { projects } from "@/data/projects"
+import { Project } from "@/types/project"
+import { notFound } from "next/navigation"
 
-type PageProps = {
+interface PageProps {
   params: {
     slug: string;
   };
-};
+}
 
-export function generateStaticParams(): PageProps["params"][] {
+// Generate static params at build time
+export async function generateStaticParams() {
   return projects.map((project) => ({
     slug: project.slug,
   }));
 }
 
-export default async function ProjectPage({ params }: PageProps) {
-  const { slug } = params;
-  console.log(slug)
+export default async function Post({ params }: PageProps) {
+  const { slug } = await params;
   const project = projects.find((project) => project.slug === slug)
-  
+
   if (!project) {
-    notFound()
+    notFound();
   }
 
   return (
