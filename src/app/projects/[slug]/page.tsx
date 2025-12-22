@@ -30,7 +30,7 @@ export default async function Post({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar links={ [] } />
 
       <div className="pt-24 pb-16 px-6">
         <div className="max-w-5xl mx-auto">

@@ -5,17 +5,17 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./theme-toggle"
 
-const navLinks = [
-  { name: "À propos", href: "#about" },
-  { name: "Compétences", href: "#skills" },
-  { name: "Projets", href: "#projects" },
-  { name: "Parcours", href: "#experience" },
-  { name: "Contact", href: "#contact" },
-]
+export interface NavLink {
+  name: string;
+  href: string;
+}
 
-export function Navbar() {
+interface NavbarProps {
+  links: NavLink[];
+}
+
+export function Navbar({ links }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,18 +34,20 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4">
         <nav className="flex items-center justify-end gap-4">
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                <span className="text-primary">{"#"}</span>
-                {link.name}
-              </a>
-            ))}
-          </div>
+          {links.length > 0 && (
+            <div className="hidden md:flex items-center gap-8">
+              {links.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <span className="text-primary">{"#"}</span>
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          )}
           <ThemeToggle />
         </nav>
       </div>
