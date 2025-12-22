@@ -7,17 +7,27 @@ import { ExperienceSection } from "@/components/experience-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 
+const navLinks = [
+  { name: "À propos", href: "#about" },
+  { name: "Compétences", href: "#skills" },
+  { name: "Projets", href: "#projects" },
+  { name: "Parcours", href: "#experience" },
+  { name: "Contact", href: "#contact" },
+]
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background">
-      <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ExperienceSection />
-      <ContactSection />
+    <>
+      <Navbar links={ navLinks } />
+      <main className="min-h-screen bg-background">
+        <HeroSection />
+        <AboutSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ExperienceSection />
+        <ContactSection />
+      </main>
       <Footer />
-    </main>
+    </>
   )
 }

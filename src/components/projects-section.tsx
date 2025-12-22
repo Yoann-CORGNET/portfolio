@@ -5,7 +5,7 @@ export function ProjectsSection() {
 
   return (
     <section id="projects" className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="flex items-center gap-3 mb-12">
           <span className="text-primary text-xl">{"#"}</span>

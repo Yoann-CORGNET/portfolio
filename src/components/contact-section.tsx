@@ -24,7 +24,7 @@ const contactLinks = [
 export function ContactSection() {
   return (
     <section id="contact" className="py-24 px-6">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="flex items-center gap-3 mb-12">
           <span className="text-primary text-xl">{"#"}</span>
@@ -32,7 +32,7 @@ export function ContactSection() {
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        <div className="rounded-lg bg-card border border-border overflow-hidden">
+        <div className="max-w-3xl mx-auto rounded-lg bg-card border border-border overflow-hidden">
           {/* Terminal header */}
           <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
             <div className="flex gap-1.5">
