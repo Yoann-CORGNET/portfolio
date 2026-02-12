@@ -4,7 +4,12 @@ export function getBaseUrl() {
     return ""
   }
 
-  // Vercel (production || preview)
+  // Custom domain name 
+  if (process.env.APP_URL) {
+    return `https://${process.env.APP_URL}`
+  }
+
+  // Vercel auto generated (production || preview)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`
   }
