@@ -1,26 +1,22 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { QRCodeSVG } from "qrcode.react"
-import { useTheme } from "next-themes"
+import { QRCodeSVG } from "qrcode.react";
+import { useTheme } from "next-themes";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface QRCodeDisplayProps {
-  url: string
+  url: string;
 }
 
 export function QRCodeDisplay({ url }: QRCodeDisplayProps) {
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const { resolvedTheme } = useTheme();
+  const mounted = useMounted();
 
   if (!mounted) {
-    return <div className="w-64 h-64 bg-secondary/50 rounded-lg animate-pulse" />
+    return <div className="w-64 h-64 bg-secondary/50 rounded-lg animate-pulse" />;
   }
 
-  const isDark = resolvedTheme === "dark"
+  const isDark = resolvedTheme === "dark";
 
   return (
     <div className="rounded-lg bg-white p-4">
@@ -32,5 +28,5 @@ export function QRCodeDisplay({ url }: QRCodeDisplayProps) {
         fgColor={isDark ? "#15803d" : "#166534"}
       />
     </div>
-  )
+  );
 }
