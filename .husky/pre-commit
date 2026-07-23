@@ -1,0 +1,4 @@
+# Pre-commit: format + lint staged files only (fast).
+# Runs eslint --fix + prettier --write via lint-staged; blocks on unfixable
+# lint errors. Typecheck runs on pre-push (see .husky/pre-push).
+pnpm exec lint-staged

@@ -1,0 +1,6 @@
+# Pre-push: whole-project type-check. Blocks the push on failure.
+# The build ignores TypeScript errors (next.config.mjs), so this is the
+# only thing that catches them before CI does.
+set -e
+
+pnpm run typecheck
