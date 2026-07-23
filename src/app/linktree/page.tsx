@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Home, Linkedin, Github, Mail, FileDown, ArrowUpRight } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   {
@@ -53,11 +52,6 @@ export default function LinktreePage() {
       <div className="fixed inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
 
       <div className="relative z-10 w-full max-w-lg mx-auto flex flex-col items-center gap-8">
-        {/* Theme toggle */}
-        <div className="self-end">
-          <ThemeToggle />
-        </div>
-
         {/* Header */}
         <div className="flex flex-col items-center gap-4">
           <Link href="/">

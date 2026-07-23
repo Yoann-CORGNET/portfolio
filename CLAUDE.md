@@ -57,7 +57,10 @@ Custom section components live directly in `src/components/` (e.g., `hero-sectio
 
 ### Theming
 
-- Dark/light mode via `next-themes` with `ThemeProvider` in root layout. Default theme is dark.
+- The site is **light-only**. There is no theme switching, no `next-themes`, and no `.dark` class on
+  the tree. The `@custom-variant dark` line in `globals.css` is deliberately kept so the `dark:`
+  utilities inside the vendored `src/components/ui` stay inert — dropping it would let them fall
+  back to Tailwind's `prefers-color-scheme` variant and reintroduce dark styling.
 - CSS variables in `src/app/globals.css` using **OKLch color space**. Primary color is green (hue
   ~145).
 - Both `--font-sans` and `--font-mono` map to JetBrains Mono — the entire site uses monospace.

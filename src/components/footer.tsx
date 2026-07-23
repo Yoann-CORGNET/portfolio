@@ -1,5 +1,3 @@
-import { ThemeToggle } from "./theme-toggle";
-
 export function Footer() {
   return (
     <footer className="py-8 px-6 border-t border-border">
@@ -22,7 +20,6 @@ export function Footer() {
           <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
             Contact
           </a>
-          <ThemeToggle />
         </nav>
       </div>
     </footer>

@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* The site is light-only: there is no `.dark` class on the tree, so this variant
+   never matches. It stays to neutralise the `dark:` utilities that ship with the
+   vendored shadcn components in `src/components/ui` — without it they would fall
+   back to Tailwind's `prefers-color-scheme` variant and dark styling would leak
+   back in for visitors whose OS is set to dark. */
 @custom-variant dark (&:is(.dark *));
 
 html {
@@ -41,41 +46,6 @@ html {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.12 0.02 155);
-  --foreground: oklch(0.9 0.02 155);
-  --card: oklch(0.16 0.02 155);
-  --card-foreground: oklch(0.9 0.02 155);
-  --popover: oklch(0.12 0.02 155);
-  --popover-foreground: oklch(0.9 0.02 155);
-  --primary: oklch(0.7 0.2 145);
-  --primary-foreground: oklch(0.12 0.02 155);
-  --secondary: oklch(0.2 0.02 155);
-  --secondary-foreground: oklch(0.9 0.02 155);
-  --muted: oklch(0.2 0.02 155);
-  --muted-foreground: oklch(0.6 0.02 155);
-  --accent: oklch(0.7 0.2 145);
-  --accent-foreground: oklch(0.12 0.02 155);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.25 0.02 155);
-  --input: oklch(0.25 0.02 155);
-  --ring: oklch(0.7 0.2 145);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
