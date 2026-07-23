@@ -1,6 +1,11 @@
 name: ci
 
+# Also runs on main, not just pull requests: SonarQube Cloud needs the
+# main-branch analysis to know what counts as "new code" on a PR.
 on:
+  push:
+    branches:
+      - main
   pull_request:
 
 concurrency:
@@ -28,3 +33,37 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm run ${{ matrix.task }}
+
+  sonar:
+    name: sonar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Sonar needs the full history to attribute new code to a commit.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # `|| true` because eslint exits non-zero when it reports problems, and
+      # the report is the point here — the lint job above is what gates.
+      - name: Generate the ESLint report
+        run: pnpm run lint:report || true
+
+      - name: Scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Quality gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

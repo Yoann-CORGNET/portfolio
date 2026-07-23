@@ -21,7 +21,10 @@ Mono font.
 - `pnpm run start` — Start production server
 
 Package manager is **pnpm**. The `ci` workflow runs typecheck, lint, format:check and build as four
-parallel matrix jobs on every PR. Husky hooks run `lint-staged` on commit and `typecheck` on push.
+parallel matrix jobs, plus a `sonar` job that analyses the project against SonarQube Cloud with a
+blocking quality gate. It runs on every PR and on pushes to `main` — Sonar needs the main-branch
+analysis as its new-code baseline. Husky hooks run `lint-staged` on commit, `typecheck` and `lint`
+on push.
 
 ## Architecture
 
