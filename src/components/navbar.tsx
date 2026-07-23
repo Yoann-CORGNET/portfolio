@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { ThemeToggle } from "./theme-toggle"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { ThemeToggle } from "./theme-toggle";
+import Link from "next/link";
 import Image from "next/image";
 
 export interface NavLink {
@@ -15,15 +15,15 @@ interface NavbarProps {
 }
 
 export function Navbar({ links }: NavbarProps) {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
@@ -32,17 +32,17 @@ export function Navbar({ links }: NavbarProps) {
       }`}
     >
       <div className="max-w-7xl mx-auto px-16 py-4 flex items-center justify-between">
-        <Link href='/' className="font-bold text-xl hover:text-primary transition-colors">
+        <Link href="/" className="font-bold text-xl hover:text-primary transition-colors">
           <Image
-              src="/logo.svg"
-              alt="Portfolio Logo"
-              width={120}
-              height={40}
-              priority
-              className="h-10 w-auto"
-            />
+            src="/logo.svg"
+            alt="Portfolio Logo"
+            width={120}
+            height={40}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
-        
+
         <nav className="flex items-center justify-end gap-4">
           {/* Desktop navigation */}
           {links.length > 0 && (
@@ -63,5 +63,5 @@ export function Navbar({ links }: NavbarProps) {
         </nav>
       </div>
     </header>
-  )
+  );
 }

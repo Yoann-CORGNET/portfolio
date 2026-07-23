@@ -12,7 +12,14 @@ const skillCategories = [
   {
     title: "DevOps & Outils",
     command: "devops --list",
-    skills: ["Git / GitHub", "GitHub Actions", "Docker", "Google Cloud", "Pipeline CI/CD", "PostgreSQL / MySQL"],
+    skills: [
+      "Git / GitHub",
+      "GitHub Actions",
+      "Docker",
+      "Google Cloud",
+      "Pipeline CI/CD",
+      "PostgreSQL / MySQL",
+    ],
   },
   {
     title: "Gestion & Langues",
@@ -26,7 +33,7 @@ const skillCategories = [
       "Communication",
     ],
   },
-]
+];
 
 export function SkillsSection() {
   return (
@@ -41,7 +48,10 @@ export function SkillsSection() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {skillCategories.map((category) => (
-            <div key={category.title} className="rounded-lg bg-card border border-border overflow-hidden">
+            <div
+              key={category.title}
+              className="rounded-lg bg-card border border-border overflow-hidden"
+            >
               {/* Terminal header */}
               <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
                 <div className="flex gap-1.5">
@@ -72,5 +82,5 @@ export function SkillsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

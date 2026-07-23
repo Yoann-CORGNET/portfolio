@@ -1,8 +1,7 @@
-import { projects } from "@/data/projects"
-import { ProjectCard } from "./project-card"
+import { projects } from "@/data/projects";
+import { ProjectCard } from "./project-card";
 
 export function ProjectsSection() {
-
   return (
     <section id="projects" className="py-24 px-6">
       <div className="max-w-5xl mx-auto">
@@ -20,5 +19,5 @@ export function ProjectsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Home, Linkedin, Github, Mail, FileDown, ArrowUpRight } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
+import Link from "next/link";
+import Image from "next/image";
+import { Home, Linkedin, Github, Mail, FileDown, ArrowUpRight } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   {
@@ -44,7 +44,7 @@ const links = [
     external: false,
     download: true,
   },
-]
+];
 
 export default function LinktreePage() {
   return (
@@ -124,5 +124,5 @@ export default function LinktreePage() {
         </p>
       </div>
     </div>
-  )
+  );
 }
