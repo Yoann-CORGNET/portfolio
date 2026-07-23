@@ -9,6 +9,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
+    "lint:report": "eslint -f json -o eslint-report.json",
     "prepare": "husky",
     "start": "next start",
     "typecheck": "tsc --noEmit"
