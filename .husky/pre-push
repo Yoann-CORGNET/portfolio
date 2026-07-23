@@ -1,6 +1,8 @@
-# Pre-push: whole-project type-check. Blocks the push on failure.
-# The build ignores TypeScript errors (next.config.mjs), so this is the
-# only thing that catches them before CI does.
+# Pre-push: whole-project type-check and lint. Blocks the push on failure.
+# set -e ensures a typecheck failure aborts before lint runs (and blocks).
+# lint-staged only sees staged files at commit time, so this is what catches
+# a change that breaks a file you did not touch.
 set -e
 
 pnpm run typecheck
+pnpm run lint
