@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -59,7 +58,6 @@ export function Navbar({ links }: NavbarProps) {
               ))}
             </div>
           )}
-          <ThemeToggle />
         </nav>
       </div>
     </header>
