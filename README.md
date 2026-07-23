@@ -1,5 +1,14 @@
 # Portfolio
 
+<!-- prettier-ignore -->
+| | |
+| --- | --- |
+| CI/CD | [![CI](https://github.com/Yoann-CORGNET/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Yoann-CORGNET/portfolio/actions/workflows/ci.yml) [![release-please](https://github.com/Yoann-CORGNET/portfolio/actions/workflows/release-please.yml/badge.svg)](https://github.com/Yoann-CORGNET/portfolio/actions/workflows/release-please.yml) |
+| Quality | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) |
+| Metrics | [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Yoann-CORGNET_portfolio&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Yoann-CORGNET_portfolio) |
+| Stack | [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs&logoColor=white)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) [![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-new--york-000000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/) |
+| Meta | [![pnpm](https://img.shields.io/badge/pnpm-9-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/) [![Prettier](https://img.shields.io/badge/code_style-Prettier-F7B93E?logo=prettier&logoColor=black)](https://prettier.io/) [![ESLint](https://img.shields.io/badge/linted_by-ESLint-4B32C3?logo=eslint&logoColor=white)](https://eslint.org/) [![Conventional Commits](https://img.shields.io/badge/Conventional_Commits-1.0.0-FE5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/) [![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/) |
+
 Salut, je suis Yoann, étudiant ingénieur en 4ème année à l'EISEA.  
 Spécialisé en Software Engineering, je suis passionné par les systèmes complexes, le web et le
 développement backend & fullstack.
@@ -7,9 +16,4 @@ développement backend & fullstack.
 Ce projet a été réalisé en grande partie à l'aide de v0, mais il est destiné à être un mini
 laboratoire en constante évolution !
 
-## Installation
-
-```bash
-pnpm install
-pnpm run dev
-```
+Les conventions de contribution sont dans [CONTRIBUTING.md](./CONTRIBUTING.md).
