@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowDown, Mail } from "lucide-react"
-import { useScrollTo } from "@/hooks/use-scroll-to"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowDown, Mail } from "lucide-react";
+import { useScrollTo } from "@/hooks/use-scroll-to";
 
 export function HeroSection() {
   const [displayedText, setDisplayedText] = useState("");
@@ -12,25 +12,25 @@ export function HeroSection() {
   const fullText = "Étudiant ingénieur en Software Engineering";
 
   useEffect(() => {
-    let index = 0
+    let index = 0;
     const interval = setInterval(() => {
       if (index <= fullText.length) {
-        setDisplayedText(fullText.slice(0, index))
-        index++
+        setDisplayedText(fullText.slice(0, index));
+        index++;
       } else {
-        clearInterval(interval)
+        clearInterval(interval);
       }
-    }, 50)
+    }, 50);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev)
-    }, 530)
-    return () => clearInterval(cursorInterval)
-  }, [])
+      setShowCursor((prev) => !prev);
+    }, 530);
+    return () => clearInterval(cursorInterval);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center px-auto overflow-hidden">
@@ -39,7 +39,8 @@ export function HeroSection() {
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-          <span className="text-primary">{">"}</span> <span className="text-foreground">Yoann CORGNET</span>
+          <span className="text-primary">{">"}</span>{" "}
+          <span className="text-foreground">Yoann CORGNET</span>
           <span className={`text-primary ${showCursor ? "opacity-100" : "opacity-0"}`}>_</span>
         </h1>
 
@@ -63,7 +64,9 @@ export function HeroSection() {
             size="lg"
             variant="outline"
             className="border-primary text-primary hover:bg-primary hover:text-primary-foreground gap-2 bg-transparent"
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() =>
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+            }
           >
             <Mail className="h-4 w-4" />
             Me contacter
@@ -71,5 +74,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

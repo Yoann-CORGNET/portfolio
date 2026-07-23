@@ -1,4 +1,4 @@
-import { ThemeToggle } from "./theme-toggle"
+import { ThemeToggle } from "./theme-toggle";
 
 export function Footer() {
   return (
@@ -13,7 +13,10 @@ export function Footer() {
           <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">
             À propos
           </a>
-          <a href="#projects" className="text-muted-foreground hover:text-primary transition-colors">
+          <a
+            href="#projects"
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
             Projets
           </a>
           <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
@@ -23,5 +26,5 @@ export function Footer() {
         </nav>
       </div>
     </footer>
-  )
+  );
 }

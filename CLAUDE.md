@@ -1,44 +1,62 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this
+repository.
 
 ## Project Overview
 
-Personal portfolio website built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS 4. French language throughout (`lang="fr"`). Monospace programming aesthetic using JetBrains Mono font.
+Personal portfolio website built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind
+CSS 4. French language throughout (`lang="fr"`). Monospace programming aesthetic using JetBrains
+Mono font.
 
 ## Commands
 
 - `pnpm run dev` — Start development server
 - `pnpm run build` — Production build (TypeScript errors are ignored via `next.config.mjs`)
-- `pnpm run lint` — ESLint
+- `pnpm run typecheck` — `tsc --noEmit`; the only thing that catches TS errors, since the build
+  ignores them
+- `pnpm run lint` — ESLint (flat config in `eslint.config.mjs`; `src/components/ui/**` is ignored as
+  vendored shadcn output)
+- `pnpm run format` / `pnpm run format:check` — Prettier over the whole repo
 - `pnpm run start` — Start production server
 
-Package manager is **pnpm**.
+Package manager is **pnpm**. The `ci` workflow runs typecheck, lint, format:check and build as four
+parallel matrix jobs on every PR. Husky hooks run `lint-staged` on commit and `typecheck` on push.
 
 ## Architecture
 
 ### Routing
 
 Next.js App Router with two routes:
-- `/` — Single-page homepage composed of section components (Hero, About, Skills, Projects, Experience, Contact)
-- `/projects/[slug]` — Dynamic project detail pages, statically generated via `generateStaticParams()` from `src/data/projects.ts`
 
-Navigation on the homepage uses anchor-based scrolling (`#about`, `#skills`, `#projects`, `#experience`, `#contact`).
+- `/` — Single-page homepage composed of section components (Hero, About, Skills, Projects,
+  Experience, Contact)
+- `/projects/[slug]` — Dynamic project detail pages, statically generated via
+  `generateStaticParams()` from `src/data/projects.ts`
+
+Navigation on the homepage uses anchor-based scrolling (`#about`, `#skills`, `#projects`,
+`#experience`, `#contact`).
 
 ### Data Flow
 
-Project data is defined as a static array in `src/data/projects.ts` using the `Project` type from `src/types/project.ts`. Both the projects grid on the homepage and the dynamic `[slug]` pages read from this single data source. To add a new project, add an entry to this array — no database or API involved.
+Project data is defined as a static array in `src/data/projects.ts` using the `Project` type from
+`src/types/project.ts`. Both the projects grid on the homepage and the dynamic `[slug]` pages read
+from this single data source. To add a new project, add an entry to this array — no database or API
+involved.
 
 ### Component Library
 
-UI primitives come from **shadcn/ui** (new-york style) built on Radix UI, located in `src/components/ui/`. Added via `npx shadcn@latest add <component>`. Config in `components.json`.
+UI primitives come from **shadcn/ui** (new-york style) built on Radix UI, located in
+`src/components/ui/`. Added via `npx shadcn@latest add <component>`. Config in `components.json`.
 
-Custom section components live directly in `src/components/` (e.g., `hero-section.tsx`, `navbar.tsx`).
+Custom section components live directly in `src/components/` (e.g., `hero-section.tsx`,
+`navbar.tsx`).
 
 ### Theming
 
 - Dark/light mode via `next-themes` with `ThemeProvider` in root layout. Default theme is dark.
-- CSS variables in `src/app/globals.css` using **OKLch color space**. Primary color is green (hue ~145).
+- CSS variables in `src/app/globals.css` using **OKLch color space**. Primary color is green (hue
+  ~145).
 - Both `--font-sans` and `--font-mono` map to JetBrains Mono — the entire site uses monospace.
 - Custom CSS animations: `animate-blink` (terminal cursor), `scanlines` (retro effect).
 
@@ -48,7 +66,17 @@ Custom section components live directly in `src/components/` (e.g., `hero-sectio
 
 ## Conventions
 
-- Commit messages use prefixes: `feat:`, `fix:`, `hotfix:`
+- Never commit to `main` — branch (`<type>/<description>`) and open a PR. See `CONTRIBUTING.md`.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
+  `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `build`, `ci`, `perf`, `revert`. There is no
+  `hotfix:` type — an urgent fix lives on a `hotfix/` branch but is committed as `fix:`.
 - Client components use `"use client"` directive; default is server components
 - Tailwind utility classes inline, merged with `cn()` from `src/lib/utils.ts`
 - Icons from `lucide-react`
+
+## Releases
+
+Versions are managed by [release-please](https://github.com/googleapis/release-please) (`node`
+release type, config in `release-please-config.json`). Never edit `version` in `package.json` or
+`CHANGELOG.md` by hand — merging to `main` opens a release PR that does it, and merging that PR tags
+the release.

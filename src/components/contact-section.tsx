@@ -1,4 +1,4 @@
-import { Mail, Github, Linkedin, ArrowUpRight, Phone } from "lucide-react"
+import { Mail, Github, Linkedin, ArrowUpRight } from "lucide-react";
 
 const contactLinks = [
   {
@@ -19,7 +19,7 @@ const contactLinks = [
     href: "https://github.com/yoann-corgnet",
     icon: Github,
   },
-]
+];
 
 export function ContactSection() {
   return (
@@ -48,12 +48,14 @@ export function ContactSection() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4 text-sm">
                 <span className="text-primary">$</span>
-                <span className="text-muted-foreground">echo &quot;Discutons de votre projet&quot;</span>
+                <span className="text-muted-foreground">
+                  echo &quot;Discutons de votre projet&quot;
+                </span>
               </div>
               <p className="text-foreground leading-relaxed">
-                Je recherche activement un stage de 4 mois (avril - août 2026) en tant que développeur Backend /
-                Fullstack. N&apos;hésitez pas à me contacter pour discuter d&apos;opportunités ou de projets
-                intéressants.
+                Je recherche activement un stage de 4 mois (avril - août 2026) en tant que
+                développeur Backend / Fullstack. N&apos;hésitez pas à me contacter pour discuter
+                d&apos;opportunités ou de projets intéressants.
               </p>
             </div>
 
@@ -81,5 +83,5 @@ export function ContactSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

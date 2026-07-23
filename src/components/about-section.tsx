@@ -1,4 +1,4 @@
-import { Server, Shield, Zap, Database, Container, GitBranch, Code2, Globe } from "lucide-react"
+import { Server, Shield, Zap, Database, Container, GitBranch, Code2, Globe } from "lucide-react";
 
 const technologies = [
   { name: "Java", icon: Code2 },
@@ -9,7 +9,7 @@ const technologies = [
   { name: "PostgreSQL", icon: Database },
   { name: "Docker", icon: Container },
   { name: "GitHub Actions", icon: GitBranch },
-]
+];
 
 const values = [
   {
@@ -27,7 +27,7 @@ const values = [
     title: "Architecture",
     description: "Architecture backend robuste et scalable",
   },
-]
+];
 
 export function AboutSection() {
   return (
@@ -50,9 +50,10 @@ export function AboutSection() {
               </div>
               <p className="text-foreground leading-relaxed">
                 Étudiant ingénieur en Software Engineering à l&apos;ESIEA, je me spécialise dans le{" "}
-                <span className="text-primary">développement backend et fullstack</span>. Mon expertise couvre la
-                création d&apos;APIs RESTful avec Java Spring et Django, le développement d&apos;applications web avec
-                Next.js et Vue.js, ainsi que la mise en place de pipelines CI/CD.
+                <span className="text-primary">développement backend et fullstack</span>. Mon
+                expertise couvre la création d&apos;APIs RESTful avec Java Spring et Django, le
+                développement d&apos;applications web avec Next.js et Vue.js, ainsi que la mise en
+                place de pipelines CI/CD.
               </p>
             </div>
 
@@ -98,5 +99,5 @@ export function AboutSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

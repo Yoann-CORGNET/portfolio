@@ -1,11 +1,10 @@
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, Github, ExternalLink, CheckCircle2 } from "lucide-react"
-import Link from "next/link"
-import { projects } from "@/data/projects"
-import { Project } from "@/types/project"
-import { notFound } from "next/navigation"
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Github, ExternalLink, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { projects } from "@/data/projects";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: {
@@ -22,7 +21,7 @@ export async function generateStaticParams() {
 
 export default async function Post({ params }: PageProps) {
   const { slug } = await params;
-  const project = projects.find((project) => project.slug === slug)
+  const project = projects.find((project) => project.slug === slug);
 
   if (!project) {
     notFound();
@@ -30,12 +29,16 @@ export default async function Post({ params }: PageProps) {
 
   return (
     <>
-      <Navbar links={ [] } />
+      <Navbar links={[]} />
       <main className="min-h-screen bg-background">
         <section className="pt-24 pb-16">
           <div className="max-w-5xl mx-auto">
             {/* Back button */}
-            <Button variant="ghost" className="mb-8 text-muted-foreground hover:text-primary" asChild>
+            <Button
+              variant="ghost"
+              className="mb-8 text-muted-foreground hover:text-primary"
+              asChild
+            >
               <Link href="/#projects">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour aux projets
@@ -125,7 +128,9 @@ export default async function Post({ params }: PageProps) {
                 <span className="text-primary">{"#"}</span>
                 {project.technicalDetails.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed mb-6">{project.technicalDetails.content}</p>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {project.technicalDetails.content}
+              </p>
               <div className="grid md:grid-cols-2 gap-3">
                 {project.technicalDetails.highlights.map((highlight, index) => (
                   <div key={index} className="flex items-start gap-2 text-sm">
@@ -144,7 +149,10 @@ export default async function Post({ params }: PageProps) {
               </h2>
               <div className="flex flex-wrap gap-3">
                 {project.stack.map((tech) => (
-                  <div key={tech.name} className="rounded-lg border border-border px-4 py-2 bg-card">
+                  <div
+                    key={tech.name}
+                    className="rounded-lg border border-border px-4 py-2 bg-card"
+                  >
                     <div className="text-xs text-muted-foreground mb-1">{tech.category}</div>
                     <div className="font-semibold text-primary">{tech.name}</div>
                   </div>
@@ -172,5 +180,5 @@ export default async function Post({ params }: PageProps) {
       </main>
       <Footer />
     </>
-  )
+  );
 }

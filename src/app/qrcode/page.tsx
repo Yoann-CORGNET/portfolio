@@ -1,10 +1,10 @@
-import Link from "next/link"
-import Image from "next/image"
-import { getBaseUrl } from "@/lib/get-base-url"
-import { QRCodeDisplay } from "@/components/qr-code-display"
+import Link from "next/link";
+import Image from "next/image";
+import { getBaseUrl } from "@/lib/get-base-url";
+import { QRCodeDisplay } from "@/components/qr-code-display";
 
 export default function QRCodePage() {
-  const linktreeUrl = `${getBaseUrl()}/linktree`
+  const linktreeUrl = `${getBaseUrl()}/linktree`;
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-6">
@@ -38,5 +38,5 @@ export default function QRCodePage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

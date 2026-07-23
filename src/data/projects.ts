@@ -1,6 +1,6 @@
-import {Project} from "@/types/project"
+import { Project } from "@/types/project";
 
-export const projects : Project[] = [
+export const projects: Project[] = [
   {
     name: "Undrive",
     slug: "undrive",
@@ -10,10 +10,11 @@ export const projects : Project[] = [
     period: "Sept. 2025 - Fév. 2026",
     github: "#",
     demo: "#",
-    
+
     // Story telling
     context: "Projet de 4e année à l'ESIEA",
-    description: "Undrive est une application mobile innovante qui utilise la gamification pour encourager l'utilisation des transports en commun. L'objectif est de réduire l'empreinte carbone en rendant les trajets en transport public plus engageants et gratifiants.",
+    description:
+      "Undrive est une application mobile innovante qui utilise la gamification pour encourager l'utilisation des transports en commun. L'objectif est de réduire l'empreinte carbone en rendant les trajets en transport public plus engageants et gratifiants.",
     problem: {
       title: "Le problème",
       small: "Faible adoption des transports en commun par manque de motivation",
@@ -22,12 +23,13 @@ export const projects : Project[] = [
     },
     solution: {
       title: "La solution",
-      small: "Application mobile de gamification avec système de récompenses pour encourager l'usage des transports",
+      small:
+        "Application mobile de gamification avec système de récompenses pour encourager l'usage des transports",
       content:
         "Undrive transforme chaque trajet en transport en commun en une expérience ludique avec un système de points, de récompenses et de défis. L'application utilise la géolocalisation pour tracker les trajets et récompenser les utilisateurs avec des avantages réels.",
     },
     impact: "API Django complète avec microservices Python, CI/CD automatisée et déploiement GCP",
-    
+
     // Tech
     technicalDetails: {
       title: "Architecture technique",
@@ -85,7 +87,7 @@ export const projects : Project[] = [
       "Pipeline CI/CD automatisée de bout en bout",
       "Intégration de données géospatiales complexes",
       "Application mobile cross-platform performante",
-    ]
+    ],
   },
   {
     name: "StockElec",
@@ -96,10 +98,11 @@ export const projects : Project[] = [
     period: "2023 - 2024",
     github: "#",
     demo: "#",
-    
+
     // Story telling
     context: "Projet de 2e année à l'ESIEA",
-    description: "StockElec est une application web complète de gestion de stock développée pour le laboratoire d'électronique de l'ESIEA. Le projet a remporté la médaille d'argent grâce à son interface intuitive et son architecture technique solide.",
+    description:
+      "StockElec est une application web complète de gestion de stock développée pour le laboratoire d'électronique de l'ESIEA. Le projet a remporté la médaille d'argent grâce à son interface intuitive et son architecture technique solide.",
     problem: {
       title: "Le problème",
       small: "Gestion manuelle et inefficace du stock du laboratoire d'électronique",
@@ -108,12 +111,13 @@ export const projects : Project[] = [
     },
     solution: {
       title: "La solution",
-      small: "Application web de gestion de stock avec tableau analytique interactif et API RESTful",
+      small:
+        "Application web de gestion de stock avec tableau analytique interactif et API RESTful",
       content:
         "StockElec offre une interface web moderne avec un tableau analytique interactif permettant de visualiser l'état du stock en temps réel, de gérer les emprunts, et d'automatiser les alertes de réapprovisionnement. Le système inclut une API RESTful complète pour des intégrations futures.",
     },
     impact: "Médaille d'argent - Développement en méthode agile avec recueil du besoin client",
-    
+
     // Tech
     technicalDetails: {
       title: "Architecture technique",
@@ -169,6 +173,6 @@ export const projects : Project[] = [
       "Développement en méthode agile avec sprints",
       "Recueil du besoin client et validation itérative",
       "Application déployée et utilisée par le laboratoire",
-    ]
+    ],
   },
-]
+];
