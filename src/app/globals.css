@@ -12,40 +12,60 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Theme.
+   ---------------------------------------------------------------------------
+   Warm paper, cold ink, one warm accent. The hue axis does the work: every
+   neutral is warm (h ≈ 85) and every
+   grey that carries text is cold (h ≈ 250). That split is what stops the page
+   reading as beige — the paper is warm, the writing on it is not.
+
+   These are the same values as the flat tokens in `src/lib/design/tokens.ts`.
+   Anything a shadcn primitive can reach lives here; anything a composition
+   needs by name lives there. Change one, change the other. */
 :root {
-  --background: oklch(0.98 0.005 155);
-  --foreground: oklch(0.2 0.02 155);
-  --card: oklch(0.95 0.01 155);
-  --card-foreground: oklch(0.2 0.02 155);
-  --popover: oklch(0.98 0.005 155);
-  --popover-foreground: oklch(0.2 0.02 155);
-  --primary: oklch(0.5 0.18 145);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.92 0.01 155);
-  --secondary-foreground: oklch(0.25 0.02 155);
-  --muted: oklch(0.92 0.01 155);
-  --muted-foreground: oklch(0.45 0.02 155);
-  --accent: oklch(0.5 0.18 145);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.85 0.02 155);
-  --input: oklch(0.85 0.02 155);
-  --ring: oklch(0.5 0.18 145);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Paper sits a step lighter than the `cream` block token, so a cream block
+     still reads as a block laid on the page rather than dissolving into it. */
+  --background: oklch(0.965 0.012 85);
+  --foreground: oklch(0.18 0.015 250);
+  --card: oklch(0.93 0.016 85);
+  --card-foreground: oklch(0.18 0.015 250);
+  --popover: oklch(0.965 0.012 85);
+  --popover-foreground: oklch(0.18 0.015 250);
+  /* Vermillon. The one warm point in a cold field — used sparingly by
+     construction, since it is the only saturated colour in the theme. */
+  --primary: oklch(0.6 0.2 33);
+  --primary-foreground: oklch(0.94 0.022 85);
+  --secondary: oklch(0.9 0.028 80);
+  --secondary-foreground: oklch(0.18 0.015 250);
+  --muted: oklch(0.91 0.02 82);
+  --muted-foreground: oklch(0.48 0.02 250);
+  --accent: oklch(0.6 0.2 33);
+  --accent-foreground: oklch(0.94 0.022 85);
+  /* Rust rather than a generic alarm red: destructive is a neighbour of the
+     accent here, not a colour imported from another system. */
+  --destructive: oklch(0.5 0.16 35);
+  --destructive-foreground: oklch(0.94 0.022 85);
+  --border: oklch(0.85 0.016 85);
+  --input: oklch(0.85 0.016 85);
+  --ring: oklch(0.6 0.2 33);
+  /* The palette, cold to warm — the same order the texture ramp runs in. */
+  --chart-1: oklch(0.6 0.2 33);
+  --chart-2: oklch(0.46 0.09 232);
+  --chart-3: oklch(0.8 0.14 72);
+  --chart-4: oklch(0.58 0.08 145);
+  --chart-5: oklch(0.66 0.06 225);
+  /* Square. Separation here is a hairline or nothing; a rounded corner would
+     contradict that everywhere it appeared. The two places that do curve (the
+     stacked blocks, the sticky disc) opt in locally with an explicit radius. */
+  --radius: 0rem;
+  --sidebar: oklch(0.93 0.016 85);
+  --sidebar-foreground: oklch(0.18 0.015 250);
+  --sidebar-primary: oklch(0.6 0.2 33);
+  --sidebar-primary-foreground: oklch(0.94 0.022 85);
+  --sidebar-accent: oklch(0.9 0.028 80);
+  --sidebar-accent-foreground: oklch(0.18 0.015 250);
+  --sidebar-border: oklch(0.85 0.016 85);
+  --sidebar-ring: oklch(0.6 0.2 33);
 }
 
 @theme inline {
@@ -75,8 +95,11 @@ html {
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  /* Clamped at zero rather than derived by subtraction: with `--radius` at 0,
+     `calc(0rem - 4px)` is a negative radius, which browsers throw out entirely
+     — leaving the rounding to chance instead of to the system. */
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
@@ -112,6 +135,26 @@ html {
 
 .animate-blink {
   animation: blink 1s infinite;
+}
+
+/* The blink is the one loop the system runs outside the ticker, and it is a
+   loop by nature: it says "still working". Reduced motion keeps the cursor,
+   drops the flashing. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blink {
+    animation: none;
+  }
+}
+
+/* Ticker. Translating by -50% lands exactly on the duplicated copy of the row,
+   so the loop has no seam. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Scanlines effect for retro feel */

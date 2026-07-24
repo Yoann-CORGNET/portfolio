@@ -15,8 +15,16 @@ export const metadata: Metadata = {
   description:
     "Portfolio de développeur full-stack orienté backend - Performance, fiabilité et architecture propre",
   generator: "v0.app",
+  // Ordered from best to last resort: a browser that understands SVG takes the
+  // first entry and never rasterises anything. The .ico is only there for the
+  // ones that still ask for /favicon.ico by name.
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico", sizes: "48x48 32x32 16x16" },
+    ],
     apple: "/apple-touch-icon.png",
   },
 };

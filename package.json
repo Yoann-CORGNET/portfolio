@@ -4,13 +4,15 @@
   "private": true,
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "build": "next build",
+    "build": "pnpm run registry:build && next build",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:report": "eslint -f json -o eslint-report.json",
     "prepare": "husky",
+    "registry:build": "shadcn build",
+    "registry:check": "node scripts/check-registry.mjs",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
@@ -78,6 +80,7 @@
     "lint-staged": "^17.1.1",
     "postcss": "^8.5",
     "prettier": "^3.9.6",
+    "shadcn": "^4.14.1",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
     "typescript": "^5"

@@ -1,0 +1,266 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "yoann",
+  "homepage": "https://yoann-corgnet.dev",
+  "items": [
+    {
+      "name": "font",
+      "type": "registry:font",
+      "title": "JetBrains Mono",
+      "description": "La police du système, et il n'y en a qu'une : sans comme mono sont JetBrains Mono. L'esthétique repose dessus — servie en serif, la bibliothèque ne ressemble plus à rien.",
+      "font": {
+        "family": "'JetBrains Mono', monospace",
+        "provider": "google",
+        "import": "JetBrains_Mono",
+        "variable": "--font-jetbrains-mono",
+        "subsets": ["latin"],
+        "dependency": "@fontsource-variable/jetbrains-mono"
+      },
+      "files": []
+    },
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "Thème",
+      "description": "Papier chaud, encre froide, un seul accent vermillon. Tous les neutres sont chauds (h ≈ 85) et tous les gris qui portent du texte sont froids (h ≈ 250) : c'est cette séparation qui empêche la page de virer au beige. Le rayon par défaut est zéro — on sépare avec un filet d'un pixel ou avec rien.",
+      "cssVars": {
+        "light": {
+          "background": "oklch(0.965 0.012 85)",
+          "foreground": "oklch(0.18 0.015 250)",
+          "card": "oklch(0.93 0.016 85)",
+          "card-foreground": "oklch(0.18 0.015 250)",
+          "popover": "oklch(0.965 0.012 85)",
+          "popover-foreground": "oklch(0.18 0.015 250)",
+          "primary": "oklch(0.6 0.2 33)",
+          "primary-foreground": "oklch(0.94 0.022 85)",
+          "secondary": "oklch(0.9 0.028 80)",
+          "secondary-foreground": "oklch(0.18 0.015 250)",
+          "muted": "oklch(0.91 0.02 82)",
+          "muted-foreground": "oklch(0.48 0.02 250)",
+          "accent": "oklch(0.6 0.2 33)",
+          "accent-foreground": "oklch(0.94 0.022 85)",
+          "destructive": "oklch(0.5 0.16 35)",
+          "destructive-foreground": "oklch(0.94 0.022 85)",
+          "border": "oklch(0.85 0.016 85)",
+          "input": "oklch(0.85 0.016 85)",
+          "ring": "oklch(0.6 0.2 33)",
+          "chart-1": "oklch(0.6 0.2 33)",
+          "chart-2": "oklch(0.46 0.09 232)",
+          "chart-3": "oklch(0.8 0.14 72)",
+          "chart-4": "oklch(0.58 0.08 145)",
+          "chart-5": "oklch(0.66 0.06 225)",
+          "radius": "0rem"
+        },
+        "theme": {
+          "font-sans": "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
+          "font-mono": "var(--font-jetbrains-mono), 'JetBrains Mono', monospace"
+        },
+        "dark": {
+          "background": "oklch(0.965 0.012 85)",
+          "foreground": "oklch(0.18 0.015 250)",
+          "card": "oklch(0.93 0.016 85)",
+          "card-foreground": "oklch(0.18 0.015 250)",
+          "popover": "oklch(0.965 0.012 85)",
+          "popover-foreground": "oklch(0.18 0.015 250)",
+          "primary": "oklch(0.6 0.2 33)",
+          "primary-foreground": "oklch(0.94 0.022 85)",
+          "secondary": "oklch(0.9 0.028 80)",
+          "secondary-foreground": "oklch(0.18 0.015 250)",
+          "muted": "oklch(0.91 0.02 82)",
+          "muted-foreground": "oklch(0.48 0.02 250)",
+          "accent": "oklch(0.6 0.2 33)",
+          "accent-foreground": "oklch(0.94 0.022 85)",
+          "destructive": "oklch(0.5 0.16 35)",
+          "destructive-foreground": "oklch(0.94 0.022 85)",
+          "border": "oklch(0.85 0.016 85)",
+          "input": "oklch(0.85 0.016 85)",
+          "ring": "oklch(0.6 0.2 33)",
+          "chart-1": "oklch(0.6 0.2 33)",
+          "chart-2": "oklch(0.46 0.09 232)",
+          "chart-3": "oklch(0.8 0.14 72)",
+          "chart-4": "oklch(0.58 0.08 145)",
+          "chart-5": "oklch(0.66 0.06 225)",
+          "radius": "0rem"
+        }
+      },
+      "files": [],
+      "registryDependencies": ["@yoann/font"]
+    },
+    {
+      "name": "design-tokens",
+      "type": "registry:lib",
+      "title": "Tokens",
+      "description": "Les aplats en OKLCh, l'échelle typographique, les durées de mouvement et la trame de points. Plus la conversion OKLCh → sRGB et les rampes de couleur, parce que les dégradés interpolés en sRGB entre teintes quasi complémentaires virent au gris.",
+      "files": [
+        {
+          "path": "src/lib/design/palette.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/palette.ts"
+        },
+        {
+          "path": "src/lib/design/tokens.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/tokens.ts"
+        }
+      ]
+    },
+    {
+      "name": "primitives",
+      "type": "registry:ui",
+      "title": "Primitives",
+      "description": "Label, Rule, Tag, Action, FlatBlock, Bracketed. Les plus petites pièces : aucun état, aucun effet, du rendu pur.",
+      "registryDependencies": ["utils", "@yoann/design-tokens"],
+      "files": [
+        {
+          "path": "src/components/system/primitives.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/primitives.tsx"
+        }
+      ]
+    },
+    {
+      "name": "brand",
+      "type": "registry:lib",
+      "title": "Marque — tracés et schémas",
+      "description": "Les quatre tracés de la marque et les schémas qui les colorent, écrits en termes de tokens. Séparé du composant pour qu'un projet puisse lire les schémas sans rendre le SVG.",
+      "registryDependencies": ["@yoann/design-tokens"],
+      "files": [
+        {
+          "path": "src/lib/design/brand.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/brand.ts"
+        }
+      ]
+    },
+    {
+      "name": "logo",
+      "type": "registry:ui",
+      "title": "Marque",
+      "description": "La marque, recolorée depuis la palette plutôt que figée dans le SVG. Les tracés et les schémas sont des données dans lib/design/logo.ts, à côté des tokens dans lesquels ils sont écrits — recolorer la marque ne demande donc jamais d'ouvrir un fichier vectoriel.",
+      "registryDependencies": ["utils", "@yoann/design-tokens", "@yoann/brand"],
+      "files": [
+        {
+          "path": "src/components/system/logo.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/logo.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stats",
+      "type": "registry:ui",
+      "title": "Chiffres",
+      "description": "Stat, StatGrid, StatCell, Meter. Chiffres tabulaires, deux tailles et rien entre les deux. Meter dessine une proportion en cellules discrètes plutôt qu'en barre : compter des cases est une lecture plus honnête qu'estimer une longueur.",
+      "registryDependencies": ["utils", "@yoann/primitives"],
+      "files": [
+        {
+          "path": "src/components/system/stats.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/stats.tsx"
+        }
+      ]
+    },
+    {
+      "name": "motion",
+      "type": "registry:ui",
+      "title": "Mouvement",
+      "description": "Reveal, StaggerHeading, Marquee. Le mouvement sert à arriver, jamais à attirer l'œil en boucle : tout est one-shot, sauf le bandeau défilant qui tient dans quelques dizaines de pixels de haut.",
+      "registryDependencies": ["utils", "@yoann/design-tokens"],
+      "css": {
+        "@keyframes marquee": {
+          "from": {
+            "transform": "translateX(0)"
+          },
+          "to": {
+            "transform": "translateX(-50%)"
+          }
+        }
+      },
+      "files": [
+        {
+          "path": "src/components/system/motion.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/motion.tsx"
+        }
+      ]
+    },
+    {
+      "name": "controls",
+      "type": "registry:ui",
+      "title": "Contrôles",
+      "description": "HoverIndex, Segmented, et la bascule de surface (SurfaceProvider, SurfaceSwitch, Preview) pour prévisualiser un composant sur crème et sur encre. L'accent chaud ne marque qu'une chose à la fois.",
+      "registryDependencies": ["utils", "@yoann/design-tokens"],
+      "files": [
+        {
+          "path": "src/components/system/controls.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/controls.tsx"
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "type": "registry:ui",
+      "title": "Structures",
+      "description": "Frame et Etude. Frame borne une surface pour la texture et supprime le couple d'éléments imbriqués que chaque panneau texturé réclame.",
+      "registryDependencies": ["utils", "@yoann/primitives"],
+      "files": [
+        {
+          "path": "src/components/system/layout.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/layout.tsx"
+        }
+      ]
+    },
+    {
+      "name": "flow-field",
+      "type": "registry:block",
+      "title": "Champ de courbes",
+      "description": "La texture générative : des lignes de courant régulièrement espacées sur un champ de bruit, d'après Jobard & Lefebvre. Pas un champ de particules — celui-ci s'effondre en paquets fougère — mais une courbe répétée à intervalle constant. Réagit au curseur, qui écarte les courbes puis les laisse se refermer.",
+      "registryDependencies": ["utils", "@yoann/design-tokens"],
+      "files": [
+        {
+          "path": "src/lib/design/noise.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/noise.ts"
+        },
+        {
+          "path": "src/lib/design/streamlines.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/streamlines.ts"
+        },
+        {
+          "path": "src/components/system/flow-field.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/flow-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "system",
+      "type": "registry:base",
+      "title": "Système complet",
+      "description": "Le thème, les tokens et toute la bibliothèque en une commande, plus le baril d'import. Tout ce qui consomme le système importe depuis @/components/system et jamais d'un fichier directement.",
+      "registryDependencies": [
+        "@yoann/font",
+        "@yoann/theme",
+        "@yoann/design-tokens",
+        "@yoann/primitives",
+        "@yoann/brand",
+        "@yoann/logo",
+        "@yoann/stats",
+        "@yoann/motion",
+        "@yoann/controls",
+        "@yoann/layout",
+        "@yoann/flow-field"
+      ],
+      "files": [
+        {
+          "path": "src/components/system/index.ts",
+          "type": "registry:ui",
+          "target": "@components/system/index.ts"
+        }
+      ]
+    }
+  ]
+}

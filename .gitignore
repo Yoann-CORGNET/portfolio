@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# shadcn registry — generated from registry.json by `pnpm run registry:build`
+# (which `build` runs first). Never hand-edited, so never committed; it is
+# regenerated on every deploy, which makes source-vs-published drift impossible.
+/public/r/
+
 # production
 /build
 

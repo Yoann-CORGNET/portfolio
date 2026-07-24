@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "@/components/system";
 
 export interface NavLink {
   name: string;
@@ -32,14 +32,7 @@ export function Navbar({ links }: NavbarProps) {
     >
       <div className="max-w-7xl mx-auto px-16 py-4 flex items-center justify-between">
         <Link href="/" className="font-bold text-xl hover:text-primary transition-colors">
-          <Image
-            src="/logo.svg"
-            alt="Portfolio Logo"
-            width={120}
-            height={40}
-            priority
-            className="h-10 w-auto"
-          />
+          <Logo label="Yoann CORGNET" className="h-10 w-10" />
         </Link>
 
         <nav className="flex items-center justify-end gap-4">

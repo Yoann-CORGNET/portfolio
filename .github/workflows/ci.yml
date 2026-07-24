@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        task: [typecheck, lint, format:check, build]
+        task: [typecheck, lint, format:check, registry:check, build]
     steps:
       - uses: actions/checkout@v5
 
