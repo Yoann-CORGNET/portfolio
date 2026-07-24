@@ -6,3 +6,7 @@ set -e
 
 pnpm run typecheck
 pnpm run lint
+# Registry completeness: a component in the barrel but not in registry.json
+# ships a broken `shadcn add`. Deterministic and offline (plain file reads), so
+# it front-runs the CI check here instead of only failing after a push.
+pnpm run registry:check
