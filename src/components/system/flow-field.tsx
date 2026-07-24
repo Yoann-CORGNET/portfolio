@@ -68,7 +68,7 @@ const REVEAL_CHUNKS = 40;
 const EASE = 0.12;
 
 const smoothstep = (t: number) => {
-  const x = t < 0 ? 0 : t > 1 ? 1 : t;
+  const x = Math.max(0, Math.min(1, t));
   return x * x * (3 - 2 * x);
 };
 
@@ -90,7 +90,7 @@ export function FlowField({
   plateau = 0.5,
   cursor = true,
   className,
-}: FlowFieldProps) {
+}: Readonly<FlowFieldProps>) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
