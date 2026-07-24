@@ -1,0 +1,82 @@
+/**
+ * The mark, as data.
+ *
+ * The original green (`#377138`, `oklch(0.495 0.107 144)`) predates the system.
+ * It has a near-exact counterpart in `moss` (`oklch(0.58 0.08 145)`) — same hue,
+ * two notches lighter — and that translation was drawn, looked at, and dropped:
+ * the mark always sits next to a vermillon prompt, and a second saturated hue on
+ * that line competes for the accent instead of yielding it.
+ *
+ * The mark is kept as four paths with the colour held in a scheme, so changing
+ * it is one line here rather than an edit to a file nobody wants to open.
+ */
+
+import type { FlatToken } from "./tokens";
+
+/**
+ * The four paths, in the order every scheme colours them.
+ *
+ * They group two ways and both groupings are useful: the outer pair are the
+ * chevrons that bracket the mark, the inner pair the blades that cross it.
+ */
+export const LOGO_PATHS = [
+  {
+    id: "chevron-gauche",
+    d: "M18.1928 37.6636C21.2596 34.4325 24.1346 32.817 26.818 32.817C29.1728 32.817 31.5276 34.1587 33.8825 36.8421L19.9179 50.396L34.0467 64.1142C33.061 65.319 31.9657 66.2773 30.761 66.9893C29.6109 67.7012 28.324 68.0571 26.9002 68.0571C25.6406 68.0571 24.2989 67.7012 22.8751 66.9893C21.4512 66.2226 19.9452 64.9904 18.3571 63.2927L5.95325 50.3139L18.1928 37.6636Z",
+  },
+  {
+    id: "chevron-droit",
+    d: "M81.8072 63.2106C78.7404 66.4416 75.8654 68.0571 73.182 68.0571C70.8272 68.0571 68.4724 66.7154 66.1175 64.032L80.0821 50.4782L65.9533 36.76C66.939 35.5552 68.0343 34.5968 69.239 33.8849C70.3891 33.173 71.676 32.817 73.0998 32.817C74.3594 32.817 75.7011 33.173 77.1249 33.8849C78.5488 34.6516 80.0548 35.8838 81.6429 37.5814L94.0468 50.5603L81.8072 63.2106Z",
+  },
+  {
+    id: "lame-haute",
+    d: "M37.0021 59.8519C37.0021 59.8519 37.8916 60.8429 37.6991 60.549C37.5067 60.2551 41.5927 54.1059 49.3846 48.8635C57.1765 43.621 60.7008 37.5473 60.7008 37.5473L60.0038 36.8502C59.1132 35.9596 58.1257 35.1657 57.0414 34.4687C55.9572 33.7717 54.7567 33.307 53.4401 33.0747C52.201 32.8423 50.8844 32.9585 49.4903 33.4232C48.135 33.8491 46.7604 34.7591 45.3663 36.1532L36.305 45.2145C34.911 46.6085 33.9816 48.0025 33.5169 49.3966C33.091 50.7519 32.9748 52.0685 33.1684 53.3464C33.4395 54.6242 33.9236 55.8053 34.6206 56.8896C35.3176 57.9738 36.1115 58.9613 37.0021 59.8519Z",
+  },
+  {
+    id: "lame-basse",
+    d: "M63.3017 40.1481L62.6046 39.451L39.6029 62.4527L40.3 63.1498C41.1906 64.0404 42.1781 64.8343 43.2623 65.5313C44.3466 66.2283 45.547 66.693 46.8636 66.9253C48.1028 67.1577 49.4194 67.0415 50.8134 66.5768C52.1687 66.1509 53.5434 65.2409 54.9375 63.8468L63.9987 54.7855C65.3928 53.3915 66.3221 51.9975 66.7868 50.6034C67.2128 49.2481 67.3289 47.9315 67.1353 46.6536C66.8643 45.3758 66.3802 44.1947 65.6832 43.1104C64.9862 42.0262 64.1923 41.0387 63.3017 40.1481Z",
+  },
+] as const;
+
+/** One token per path: chevron gauche, chevron droit, lame haute, lame basse. */
+export type LogoTones = readonly [FlatToken, FlatToken, FlatToken, FlatToken];
+
+export type LogoSchemeSpec = {
+  tones: LogoTones;
+  /** How many distinct tokens the scheme actually spends. */
+  colours: 1 | 2;
+  note: string;
+};
+
+/**
+ * The two schemes the mark ships in.
+ *
+ * `duo` is the brand: chevrons froids, lames chaudes — the system's own rule,
+ * one warm point in a cold field, applied to the mark itself. It replaces the
+ * green outright rather than translating it, because the mark always sits next
+ * to a vermillon prompt and a green that is *almost* the accent reads as a
+ * mistake, where a mark that *is* the accent reads as intent.
+ *
+ * `encre` exists for the one case `duo` cannot serve: the mark set as type,
+ * where a second colour inside a run of text is noise. It is not an alternative
+ * brand, it is the same brand with the accent withheld.
+ *
+ * Schemes with three and four colours were drawn and dropped. Past two, every
+ * stroke claims the same importance and the mark stops having a subject.
+ */
+export const LOGO_SCHEMES = {
+  duo: {
+    tones: ["ink", "ink", "vermillon", "vermillon"],
+    colours: 2,
+    note: "La marque. Les chevrons portent la structure, les lames portent l'accent, le même vermillon que le prompt qui la suit.",
+  },
+  encre: {
+    tones: ["ink", "ink", "ink", "ink"],
+    colours: 1,
+    note: "Quand la marque est traitée comme de la typo : dans une ligne de texte, en filigrane, ou partout où une seconde couleur ferait du bruit.",
+  },
+} as const satisfies Record<string, LogoSchemeSpec>;
+
+export type LogoScheme = keyof typeof LOGO_SCHEMES;
+
+export const LOGO_SCHEME_IDS = Object.keys(LOGO_SCHEMES) as LogoScheme[];
