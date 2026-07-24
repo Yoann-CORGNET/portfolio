@@ -56,6 +56,29 @@ and no changelog entry.
 Use kebab-case for file names. Adding a project means adding an entry to the `projects` array — the
 homepage grid and the `/projects/[slug]` pages both read from it.
 
+## Design system registry
+
+The house design system in `src/components/system/` (plus its tokens in `src/lib/design/`) is
+published as a shadcn registry so it can be installed into other projects with
+`shadcn add @yoann/system`. `registry.json` is the source of truth; the served JSON under
+`public/r/` is generated from it.
+
+Two rules, and the tooling enforces both so you do not have to remember them:
+
+- **`public/r/` is a build output, never edited or committed.** `pnpm run build` runs
+  `registry:build` (`shadcn build`) first, so the published registry is regenerated on every deploy
+  from the current source. That is why `.gitignore` excludes it: there is no committed copy to drift
+  from the source.
+- **A component exported from the barrel and meant to be distributed must have a `registry.json`
+  entry.** `pnpm run registry:check` verifies that every file the barrel (`index.ts`) reaches,
+  transitively through the shipped files, is shipped by some item — and that every path an item
+  lists exists. This is the check that a green build cannot do: the site never installs the
+  registry, so only a consumer would notice a missing item. It runs on `pre-push` and in CI.
+
+`registry:check` catches the _omission_ class. It does not catch everything: a name collision that
+makes the CLI rewrite an import wrong only shows up when you actually install into a fresh project.
+When you touch how items are split or named, do that smoke test by hand.
+
 ## Formatting
 
 Everything is formatted by Prettier (`semi`, double quotes, `trailingComma: all`, `printWidth: 100`,
@@ -69,22 +92,24 @@ rewrapped at 100 characters on top of that.
 
 - `pre-commit` runs `lint-staged` on staged files only: `eslint --fix` then `prettier --write` on
   TS/JS, `prettier --write` on JSON/CSS/YAML/Markdown. Unfixable lint errors block the commit.
-- `pre-push` runs `pnpm run typecheck` then `pnpm run lint` on the whole project and blocks the push
-  if either fails. lint-staged only sees staged files, so this is what catches a change that breaks
-  a file you did not touch.
+- `pre-push` runs `pnpm run typecheck`, `pnpm run lint`, then `pnpm run registry:check` on the whole
+  project and blocks the push if any fails. lint-staged only sees staged files, so this is what
+  catches a change that breaks a file you did not touch. All three are deterministic and offline, so
+  they front-run CI rather than making you wait for a round-trip. The slower guards (the full build,
+  Sonar) stay CI-only.
 
 To format everything by hand: `pnpm run format`. To check without writing: `pnpm run format:check`.
 
 ## Checks
 
-The `ci` workflow runs four checks in parallel, plus the `sonar` job below. Run the four locally
-first:
+The `ci` workflow runs five checks in parallel, plus the `sonar` job below. Run them locally first:
 
 ```
-pnpm run typecheck    # tsc --noEmit
-pnpm run lint         # eslint
-pnpm run format:check # prettier
-pnpm run build        # next build
+pnpm run typecheck      # tsc --noEmit
+pnpm run lint           # eslint
+pnpm run format:check   # prettier
+pnpm run registry:check # barrel ↔ registry.json completeness
+pnpm run build          # shadcn build, then next build
 ```
 
 `typecheck` matters here: `next.config.mjs` tells the build to ignore TypeScript errors, so `build`
