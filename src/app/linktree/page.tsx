@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "@/components/system";
 import { Home, Linkedin, Github, Mail, FileDown, ArrowUpRight } from "lucide-react";
 
 const links = [
@@ -55,14 +55,7 @@ export default function LinktreePage() {
         {/* Header */}
         <div className="flex flex-col items-center gap-4">
           <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="Logo"
-              width={120}
-              height={40}
-              priority
-              className="h-10 w-auto"
-            />
+            <Logo label="Yoann CORGNET" className="h-10 w-10" />
           </Link>
           <h1 className="text-2xl font-bold">
             <span className="text-primary">{">"}</span> Yoann CORGNET
