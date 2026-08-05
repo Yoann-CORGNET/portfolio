@@ -67,59 +67,19 @@ export function Reveal({
   );
 }
 
-/**
- * Splits a heading into characters so they can arrive one after another. Purely
- * decorative, so the whole string stays in a single accessible label.
- */
-export function StaggerHeading({
-  text,
-  step = 35,
-  className,
-}: Readonly<{
-  text: string;
-  /** Delay between consecutive characters, in ms. */
-  step?: number;
-  className?: string;
-}>) {
-  const [shown, setShown] = useState(false);
-  const ref = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      // Bottom-only, for the reason given in `Reveal`.
-      { rootMargin: "0px 0px -10% 0px" },
-    );
-    io.observe(node);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <h2 ref={ref} aria-label={text} className={className}>
-      {text.split("").map((char, i) => (
-        <span
-          key={`${char}-${i}`}
-          aria-hidden="true"
-          className="inline-block transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none"
-          style={{
-            transitionDelay: `${i * step}ms`,
-            opacity: shown ? 1 : 0,
-            transform: shown ? "translateY(0)" : "translateY(0.25em)",
-          }}
-        >
-          {char === " " ? " " : char}
-        </span>
-      ))}
-    </h2>
-  );
-}
+/* `StaggerHeading` a été retiré du système.
+ *
+ * Il découpait un titre en caractères pour les faire arriver l'un après
+ * l'autre : un mouvement qui ne disait rien du contenu, et qui coûtait deux
+ * choses. Il rendait chaque lettre en `inline-block`, donc ouvrait une césure
+ * possible entre deux lettres à chaque titre — tout appel devait se souvenir
+ * d'un `whitespace-nowrap`. Et il rendait un `h2` par appel, ce qui a valu à
+ * la page d'accueil quatre titres de même rang pour une seule phrase et aucun
+ * niveau un sur le document.
+ *
+ * Les trente-deux appels sont devenus des `h2` ordinaires portant la même
+ * classe : la substitution est exacte à l'animation près, puisque c'est tout
+ * ce qu'il ajoutait. */
 
 /**
  * A slow horizontal ticker — the system's one looping animation, and the reason

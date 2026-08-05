@@ -14,8 +14,12 @@ import { Label, Rule } from "./primitives";
 import { Preview } from "./controls";
 
 /* `Swatch` is chrome like everything else here, but it holds state, so it lives
-   in its own client file and is re-exported to keep one import for the page. */
+   in its own client file and is re-exported to keep one import for the page.
+   The overlap benches follow the same rule: a figure whose settings form a
+   continuous space bounded by two opposing inequalities cannot be documented by
+   three still variants, so it gets sliders. */
 export { Swatch } from "./swatch";
+export { OverlapCascadeBench, OverlapTriangleBench } from "./overlap-bench";
 
 /** A top-level division of the page. */
 export function Section({

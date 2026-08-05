@@ -18,7 +18,7 @@
 
 import { LOGO_SCHEME_IDS } from "./brand";
 
-export type Group = "primitive" | "data" | "control" | "motion" | "texture" | "layout";
+export type Group = "primitive" | "data" | "control" | "motion" | "texture" | "figure" | "layout";
 
 export type PropSpec = {
   name: string;
@@ -64,13 +64,25 @@ export const GROUPS: Record<Group, { label: string; note: string }> = {
     label: "Texture",
     note: "La moitié générative du système. Toujours minoritaire, toujours bornée.",
   },
+  figure: {
+    label: "Figures",
+    note: "Ce qui démontre au lieu d'énumérer. La géométrie est calculée, jamais approchée.",
+  },
   layout: {
     label: "Structures",
     note: "Les conteneurs. Ils portent la structure et rien d'autre.",
   },
 };
 
-export const GROUP_ORDER: Group[] = ["primitive", "data", "control", "motion", "texture", "layout"];
+export const GROUP_ORDER: Group[] = [
+  "primitive",
+  "data",
+  "control",
+  "motion",
+  "texture",
+  "figure",
+  "layout",
+];
 
 export const REGISTRY: ComponentSpec[] = [
   /* ---------------------------------------------------------------- */
@@ -147,6 +159,12 @@ export const REGISTRY: ComponentSpec[] = [
         note: "Présent : rend un <a>. Absent : rend un vrai <button>.",
       },
       {
+        name: "external",
+        type: "boolean",
+        fallback: "false",
+        note: "Nouvel onglet, avec le rel qui va avec — un target posé à la main est un rel qu'on oublie. Ne dit rien à voix haute : la langue reste au point d'appel.",
+      },
+      {
         name: "variant",
         type: '"primary" | "secondary" | "outline" | "ghost" | "link"',
         fallback: '"primary"',
@@ -210,12 +228,68 @@ export const REGISTRY: ComponentSpec[] = [
         name: "scheme",
         type: LOGO_SCHEME_IDS.map((id) => `"${id}"`).join(" | "),
         fallback: '"duo"',
-        note: "« duo » est la marque. « encre » la retire d'une couleur quand elle est composée dans du texte.",
+        note: "« duo » est la marque. « craie » est la même sur un fond sombre, où les chevrons encre s'éteindraient. « encre » lui retire une couleur quand elle est composée dans du texte.",
       },
       {
         name: "label",
         type: "string",
         note: "À poser quand la marque est seule. Omis, le SVG est masqué aux lecteurs d'écran.",
+      },
+    ],
+  },
+  {
+    id: "tooltip",
+    name: "Tooltip",
+    group: "primitive",
+    file: "primitives.tsx",
+    client: false,
+    purpose:
+      "Une bulle que son ancre révèle, au-dessus d'elle. En CSS seul, donc rendue par le serveur ; en échange elle ne se retourne pas quand elle sortirait de l'écran.",
+    variants: ["au survol", "au clavier"],
+    props: [
+      {
+        name: "children",
+        type: "React.ReactNode",
+        note: "Contenu phrasé uniquement : la bulle est un span, pour tenir aussi dans du texte courant.",
+      },
+      {
+        name: "id",
+        fallback: "—",
+        type: "string",
+        note: "Cible du aria-describedby de l'ancre. Omis, la bulle reste purement visuelle.",
+      },
+      {
+        name: "className",
+        fallback: "—",
+        type: "string",
+        note: "Pour replacer la bulle quand elle sortirait du cadre, ou changer sa largeur.",
+      },
+    ],
+  },
+  {
+    id: "watermark",
+    name: "Watermark",
+    group: "primitive",
+    file: "primitives.tsx",
+    client: false,
+    purpose:
+      "Un chiffre démesuré et presque effacé, derrière ce qu'il repère. Il remplace le surtitre : une section se situe à sa marque, pas à une ligne de dix pixels qui redit le titre juste en dessous.",
+    variants: ["sur papier", "sur aplat"],
+    props: [
+      {
+        name: "children",
+        type: "React.ReactNode",
+        note: "La marque. Un rang le plus souvent, mais rien n'oblige à un chiffre.",
+      },
+      {
+        name: "opacity",
+        type: "number",
+        note: "Requis, sans valeur par défaut : le sombre sur clair et le clair sur sombre ne s'effacent pas au même taux.",
+      },
+      {
+        name: "className",
+        type: "string",
+        note: "Pour déplacer l'ancrage. Le parent doit porter overflow-hidden et être positionné.",
       },
     ],
   },
@@ -246,6 +320,11 @@ export const REGISTRY: ComponentSpec[] = [
       { name: "value", type: "string | number", note: "Le chiffre. Toujours tabulaire." },
       { name: "label", type: "string", note: "Légende, au palier label." },
       { name: "unit", type: "string", note: "Suffixe, au palier label lui aussi." },
+      {
+        name: "mark",
+        type: "React.ReactNode",
+        note: "Appel de note contre le chiffre. Dans sa boîte : à dimensionner en absolu, jamais en em.",
+      },
       {
         name: "delta",
         type: "number",
@@ -350,20 +429,6 @@ export const REGISTRY: ComponentSpec[] = [
     ],
   },
   {
-    id: "stagger-heading",
-    name: "StaggerHeading",
-    group: "motion",
-    file: "motion.tsx",
-    client: true,
-    purpose:
-      "Découpe un titre en caractères pour les faire arriver l'un après l'autre. Purement décoratif, donc la chaîne entière reste dans un seul libellé accessible.",
-    variants: ["35 ms", "80 ms"],
-    props: [
-      { name: "text", type: "string", note: "Sert aussi d'aria-label." },
-      { name: "step", type: "number", fallback: "35", note: "Délai entre deux caractères, en ms." },
-    ],
-  },
-  {
     id: "marquee",
     name: "Marquee",
     group: "motion",
@@ -438,14 +503,118 @@ export const REGISTRY: ComponentSpec[] = [
       {
         name: "plateau",
         type: "number",
-        fallback: "0.5",
-        note: "Part du rayon à poussée pleine avant l'amorti. Aplatit la cloche en disque.",
+        fallback: "0.4",
+        note: "Part du rayon à poussée pleine avant l'amorti. Bas, la descente s'étale sur tout le rayon et le bord reste doux ; haut, elle se tasse en un anneau net et le champ se lit comme une loupe posée dessus.",
       },
       {
         name: "cursor",
         type: "boolean",
         fallback: "true",
         note: "Remplace le curseur système par un réticule au rayon réel.",
+      },
+    ],
+  },
+
+  /* ---------------------------------------------------------------- */
+  /* Structures                                                       */
+  /* ---------------------------------------------------------------- */
+  /* ---------------------------------------------------------------- */
+  /* Figures                                                          */
+  /* ---------------------------------------------------------------- */
+  {
+    id: "overlap-cascade",
+    name: "OverlapCascade",
+    group: "figure",
+    file: "overlap.tsx",
+    client: false,
+    purpose:
+      "Trois ensembles en escalier sur la diagonale, et ce qu'ils ont en commun peint dessous. Un seul paramètre commande la figure : le côté se déduit du décalage pour que l'escalier remplisse toujours le cadre.",
+    variants: ["décalage 15", "décalage 20", "décalage 22"],
+    props: [
+      {
+        name: "shift",
+        type: "number",
+        fallback: "20",
+        note: "Décalage entre deux carrés, en % du cadre. À 25 l'intersection disparaît.",
+      },
+      { name: "dotSize", type: "number", fallback: "11", note: "Pas de la trame, en pixels." },
+      { name: "dotWeight", type: "number", fallback: "30", note: "Opacité de la trame, sur 100." },
+      {
+        name: "tone",
+        type: "string",
+        fallback: "vermillon",
+        note: "Couleur de l'intersection — le seul aplat de la figure.",
+      },
+      {
+        name: "labels",
+        type: "[string, string, string]",
+        note: "Les trois ensembles, nommés. Omis, la figure est muette.",
+      },
+    ],
+  },
+  {
+    id: "overlap-triangle",
+    name: "OverlapTriangle",
+    group: "figure",
+    file: "overlap.tsx",
+    client: false,
+    purpose:
+      "Trois ensembles en triangle, chacun pivoté de l'angle exact qui met une de ses pointes dans l'axe du centre. L'intersection est un polygone quelconque, calculée par découpage successif plutôt qu'approchée par un carré.",
+    variants: ["pointes au centre", "faces au centre", "désaxé"],
+    props: [
+      {
+        name: "side",
+        type: "number",
+        fallback: "60",
+        note: "Côté de chaque carré, en % du cadre.",
+      },
+      {
+        name: "radius",
+        type: "number",
+        fallback: "25",
+        note: "Écartement des trois centres. Trop grand, les pointes n'atteignent plus le centre.",
+      },
+      {
+        name: "orientation",
+        type: "number",
+        fallback: "120",
+        note: "Oriente le triangle entier, en degrés. 90 place un ensemble en haut.",
+      },
+      {
+        name: "skew",
+        type: "number",
+        fallback: "45",
+        note: "Écart à la règle « une pointe vers le centre ». 0 l'applique, 45 met les faces face au centre.",
+      },
+      { name: "dotSize", type: "number", fallback: "12", note: "Pas de la trame, en pixels." },
+      { name: "dotWeight", type: "number", fallback: "20", note: "Opacité de la trame, sur 100." },
+      {
+        name: "tone",
+        type: "string",
+        fallback: "vermillon",
+        note: "Couleur de l'intersection — le seul aplat de la figure.",
+      },
+      {
+        name: "labels",
+        type: "[string, string, string]",
+        note: "Les trois ensembles, nommés. Omis, la figure est muette.",
+      },
+    ],
+  },
+  {
+    id: "pipeline-flow",
+    name: "PipelineFlow",
+    group: "figure",
+    file: "pipeline-flow.tsx",
+    client: false,
+    purpose:
+      "Une suite d'étapes, chacune une nappe de cartes, reliées par des peignes qui montrent combien de cartes alimentent combien d'autres. Rien n'est figé — ni le nombre d'étapes, ni le nombre de cartes par étape, ni ce qu'une carte dit. Une étape choisit seulement comment ses cartes se révèlent au survol (« tip » ou « unfold ») et si chaque carte est une face ou deux côte à côte — c'est cette seconde forme qui laisse une étape réclamer deux numéros de nœud au lieu d'un.",
+    variants: ["bureau — chronologie complète", "mobile — liste dépliée"],
+    props: [
+      {
+        name: "steps",
+        type: "readonly PipelineFlowStep[]",
+        note: "La suite d'étapes du pipeline, dans l'ordre. Chaque étape porte ses propres intitulés, son style de survol et ses cartes.",
       },
     ],
   },

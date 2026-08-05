@@ -232,6 +232,11 @@ const BASE = cn(
   "group/action relative inline-flex select-none items-center justify-center tracking-tight",
   "transition-[translate,box-shadow,background-color,border-color,color] duration-300 ease-out",
   "motion-reduce:transition-none",
+  // The anchor path gets a pointer cursor from the browser's own `:any-link`
+  // rule; the button path does not — Tailwind's preflight resets it to
+  // `default`, same as plain HTML. Set explicitly so both paths agree, rather
+  // than relying on an accident of which element `href` happens to render.
+  "cursor-pointer",
   // Focus is a ring laid on the surface beside the control, never a change of
   // the control's own colour — that would make focus and hover say the same
   // thing. The warm accent reads against both cream and ink.
@@ -290,44 +295,19 @@ const LINK_GROW = cn(
   "group-hover/action:scale-x-100 group-data-[force=hover]/action:scale-x-100",
 );
 
-/**
- * The system's action, as a link or as a button.
- *
- * With an `href` it renders an anchor, without one a real `<button>` — because
- * an anchor cannot be disabled, cannot be submitted, and cannot be pressed with
- * the space bar. The unavailable link is handled the only way it can be: the
- * href is dropped, so there is nothing left to follow.
- */
-export function Action({
+/** The label content of an `Action` — the variant-aware underline pair for
+ *  links, the child, and the trailing loading cursor. Split out of `Action`
+ *  itself purely to keep that function's branching flat. */
+function ActionBody({
+  isLink,
+  loading,
   children,
-  href,
-  variant = "primary",
-  size = "md",
-  disabled = false,
-  loading = false,
-  force,
-  type = "button",
-  onClick,
-  className,
 }: Readonly<{
+  isLink: boolean;
+  loading: boolean;
   children: React.ReactNode;
-  /** Present: renders an anchor. Absent: renders a button. */
-  href?: string;
-  variant?: ActionVariant;
-  size?: ActionSize;
-  disabled?: boolean;
-  /** Keeps the label in place and blinks a terminal cursor at the trailing edge. */
-  loading?: boolean;
-  /** Documentation only. See `ActionState`. */
-  force?: ActionState;
-  type?: "button" | "submit" | "reset";
-  onClick?: React.MouseEventHandler<HTMLElement>;
-  className?: string;
 }>) {
-  const isLink = variant === "link";
-  const inactive = disabled || loading;
-
-  const body = (
+  return (
     <>
       {isLink ? (
         <>
@@ -349,8 +329,32 @@ export function Action({
       ) : null}
     </>
   );
+}
 
-  const shared = {
+/** The props shared between the anchor and button render of `Action` — the
+ *  class list, the CSS custom properties the `KEY` state classes read, and
+ *  the plain DOM/ARIA attributes both tags take identically. Split out of
+ *  `Action` itself purely to keep that function's branching flat. */
+function buildActionSharedProps({
+  isLink,
+  variant,
+  size,
+  disabled,
+  loading,
+  force,
+  onClick,
+  className,
+}: Readonly<{
+  isLink: boolean;
+  variant: ActionVariant;
+  size: ActionSize;
+  disabled: boolean;
+  loading: boolean;
+  force: ActionState | undefined;
+  onClick: React.MouseEventHandler<HTMLElement> | undefined;
+  className: string | undefined;
+}>) {
+  return {
     className: cn(
       BASE,
       isLink ? "pb-1 text-[var(--a-fg)]" : cn(KEY, SIZE[size].pad),
@@ -370,12 +374,85 @@ export function Action({
     "aria-busy": loading || undefined,
     onClick,
   };
+}
+
+/**
+ * The system's action, as a link or as a button.
+ *
+ * With an `href` it renders an anchor, without one a real `<button>` — because
+ * an anchor cannot be disabled, cannot be submitted, and cannot be pressed with
+ * the space bar. The unavailable link is handled the only way it can be: the
+ * href is dropped, so there is nothing left to follow.
+ */
+export function Action({
+  children,
+  href,
+  external = false,
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  loading = false,
+  force,
+  type = "button",
+  onClick,
+  className,
+}: Readonly<{
+  children: React.ReactNode;
+  /** Present: renders an anchor. Absent: renders a button. */
+  href?: string;
+  /**
+   * Opens in a new tab. Ignored without an `href`.
+   *
+   * One flag rather than a raw `target`, because the target is only half of it:
+   * a `_blank` link hands the opened page a live `window.opener` handle back to
+   * this one unless `rel` says otherwise. Modern browsers imply `noopener`,
+   * older ones do not, and a call site passing `target` by hand is one that can
+   * forget the `rel`. Here it cannot.
+   *
+   * It says nothing about the new tab out loud — announcing it would mean
+   * baking a language into a component the registry ships into other people's
+   * projects. A caller that wants it says so in its own words, in its own
+   * locale.
+   */
+  external?: boolean;
+  variant?: ActionVariant;
+  size?: ActionSize;
+  disabled?: boolean;
+  /** Keeps the label in place and blinks a terminal cursor at the trailing edge. */
+  loading?: boolean;
+  /** Documentation only. See `ActionState`. */
+  force?: ActionState;
+  type?: "button" | "submit" | "reset";
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  className?: string;
+}>) {
+  const isLink = variant === "link";
+  const inactive = disabled || loading;
+
+  const body = (
+    <ActionBody isLink={isLink} loading={loading}>
+      {children}
+    </ActionBody>
+  );
+
+  const shared = buildActionSharedProps({
+    isLink,
+    variant,
+    size,
+    disabled,
+    loading,
+    force,
+    onClick,
+    className,
+  });
 
   if (href !== undefined) {
     return (
       <a
         {...shared}
         href={disabled ? undefined : href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
         aria-disabled={disabled || undefined}
         tabIndex={disabled ? -1 : undefined}
       >
@@ -424,6 +501,155 @@ export function FlatBlock({
       ) : null}
       <div className="relative">{children}</div>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Tooltip                                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * A bubble revealed by its anchor, above it.
+ *
+ * It is CSS only — no state, no effects, no measurement — which is what keeps
+ * it here among the primitives and lets it render on the server. The price is
+ * that it does not flip when it would leave the viewport; an anchor near the
+ * top of a scroll container has to place it itself, through `className`.
+ *
+ * The anchor owns the interaction, not the bubble. Whatever wraps them both
+ * must carry `group relative`, and must be the same element that takes
+ * `:hover` and `:focus-visible` — splitting the two across a wrapper and an
+ * inner control silently kills the keyboard path, since `group-focus-visible`
+ * watches the group itself.
+ *
+ * It renders a `<span>`, deliberately. A tooltip belongs inside running text
+ * as often as beside a card, and a `<div>` inside a `<p>` is invalid markup
+ * that browsers repair by closing the paragraph early. Children must therefore
+ * be phrasing content too — `<span className="block">` where a `<p>` would
+ * have been natural.
+ *
+ * `pointer-events-none` is not decoration: the bubble must never be what
+ * receives the hover it was opened by, or moving onto it would drop the
+ * anchor's `:hover` and flicker it shut.
+ *
+ * It opens on `:focus` as well as `:focus-visible`, and that pair is what makes
+ * it work on touch. A tap focuses the anchor but does not make it
+ * focus-visible, which browsers reserve for keyboard traversal — on
+ * `focus-visible` alone the bubble is unreachable without a keyboard or a
+ * pointer, and the anchor becomes a marker for something the reader cannot
+ * open. The cost is that a mouse click leaves it open until blur, which for a
+ * definition is the behaviour one wants anyway.
+ */
+export function Tooltip({
+  children,
+  id,
+  className,
+}: Readonly<{
+  children: React.ReactNode;
+  /** Target of the anchor's `aria-describedby`. Without it the bubble is
+   *  visual only, which is the right call when it merely restates the anchor. */
+  id?: string;
+  className?: string;
+}>) {
+  return (
+    <span
+      role="tooltip"
+      id={id}
+      className={cn(
+        "pointer-events-none absolute bottom-full left-0 z-20 mb-2 w-56",
+        "border border-border bg-background p-3 text-left font-normal",
+        "opacity-0 transition-opacity duration-300 ease-out motion-reduce:transition-none",
+        "group-hover:opacity-100 group-focus:opacity-100 group-focus-visible:opacity-100",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Watermark                                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * An oversized numeral or word, faded behind the content it marks.
+ *
+ * It replaces the small eyebrow above a section title: a section is placed by
+ * its figure, not by a ten-pixel line restating the heading underneath it. The
+ * mark is therefore enormous and nearly erased — enough to locate, too little
+ * to be read before the title.
+ *
+ * Three things keep it from interfering with the page around it:
+ *
+ *  — it is `aria-hidden` and unselectable. It is decoration, and whatever rank
+ *    it announces is already carried by the order of the sections themselves;
+ *  — it draws from `currentColor` rather than a fixed token, which is what
+ *    lets the same mark cross from paper to an ink block without being
+ *    recoloured at the call site;
+ *  — it deliberately overflows its left edge. Clipping it is the parent's job
+ *    (`overflow-hidden`), as is being positioned so the mark has something to
+ *    anchor to. Content that must pass in front has to be positioned too — a
+ *    static sibling loses to an absolute one no matter the source order.
+ *
+ * One trap, and it is invisible until measured: an absolute child anchors to
+ * the *padding box* of its positioned ancestor, so a mark handed to a wrapper
+ * that itself sits inside that ancestor's padding starts below it. `FlatBlock`
+ * is exactly such a wrapper — it puts its children in an inner `relative` div,
+ * within its own padding. A mark passed to a padded `FlatBlock` therefore
+ * anchors to the content, not to the block. The fix is at the call site: leave
+ * the block unpadded and pad the content beside the mark instead.
+ *
+ * It anchors differently on the two ends of the scale, and the small end is
+ * the default rather than the override. Narrow, the mark sits in the section's
+ * top-right corner: there is no free column beside the text to bleed into, so
+ * a left-anchored mark centred on the block would sit squarely under the
+ * paragraph instead of beside it. From `md` up that column exists, and the
+ * mark moves to it — left, vertically centred, overflowing the edge.
+ */
+export function Watermark({
+  children,
+  opacity,
+  className,
+}: Readonly<{
+  children: React.ReactNode;
+  /**
+   * Deliberately required, with no default.
+   *
+   * Dark-on-light and light-on-dark do not fade at the same rate, so a single
+   * default would be wrong on one of the two surfaces — and wrong quietly,
+   * which is the worst way for a decorative layer to fail.
+   */
+  opacity: number;
+  className?: string;
+}>) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute select-none",
+        // Narrow: pinned to the top-right corner, nothing translated.
+        "top-0 right-0",
+        // From `md`: released from the right, re-anchored left of the frame
+        // and centred on it.
+        "md:top-1/2 md:right-auto md:-left-6 md:-translate-y-1/2",
+        /* `leading-[0.74]` rather than `leading-none`, and ce n'est pas un
+           réglage à l'œil. Avec un interlignage de 1, la boîte de ligne fait
+           un cadratin mais les chiffres n'en occupent que la hauteur de
+           capitale (0,73 chez JetBrains Mono) : la ligne de base tombe à 0,86
+           du haut, donc le haut des chiffres à 0,13. `top-0` colle la boîte
+           au bord et laisse malgré tout ce treizième de cadratin de vide —
+           dix-neuf pixels au corps minimal. En posant L tel que L/2 + 0,36 −
+           0,73 = 0, soit L = 0,74, le haut des chiffres tombe pile sur le
+           haut de la boîte, et le centrage de `md` devient exact par la même
+           occasion puisque la boîte ne contient plus que l'encre. */
+        "text-[clamp(9rem,24vw,18rem)] leading-[0.74] font-bold tracking-tighter tabular-nums",
+        className,
+      )}
+      style={{ opacity }}
+    >
+      {children}
+    </span>
   );
 }
 

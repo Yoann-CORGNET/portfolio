@@ -26,6 +26,7 @@ export function Stat({
   value,
   label,
   unit,
+  mark,
   delta,
   size = "default",
   className,
@@ -34,6 +35,13 @@ export function Stat({
   label: string;
   /** Suffix set at label size, so it never competes with the figure. */
   unit?: string;
+  /**
+   * A note call set against the figure itself — the anchor of whatever opens
+   * beside it. It sits inside the figure's own box, so it inherits the display
+   * size: give it an absolute one, never an `em`, or a `0.65em` mark meant to
+   * be ten pixels comes out at thirty.
+   */
+  mark?: React.ReactNode;
   /** Signed change. Positive reads moss, negative vermillion. */
   delta?: number;
   size?: StatSize;
@@ -52,6 +60,7 @@ export function Stat({
           )}
         >
           {value}
+          {mark}
         </span>
         {unit ? (
           <Label tone="inherit" className="opacity-70">

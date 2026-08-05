@@ -77,7 +77,7 @@ export function Segmented({
             key={option}
             type="button"
             onClick={() => setActive(i)}
-            className="px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
+            className="cursor-pointer px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
             style={
               active === i
                 ? { background: FLAT.ink, color: FLAT.cream }
@@ -185,7 +185,7 @@ export function SurfaceSwitch() {
           type="button"
           onClick={() => setSurface(option)}
           aria-pressed={surface === option}
-          className="px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
+          className="cursor-pointer px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
           style={
             surface === option
               ? { background: FLAT.ink, color: FLAT.cream }

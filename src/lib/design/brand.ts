@@ -49,7 +49,7 @@ export type LogoSchemeSpec = {
 };
 
 /**
- * The two schemes the mark ships in.
+ * The three schemes the mark ships in.
  *
  * `duo` is the brand: chevrons froids, lames chaudes — the system's own rule,
  * one warm point in a cold field, applied to the mark itself. It replaces the
@@ -61,14 +61,26 @@ export type LogoSchemeSpec = {
  * where a second colour inside a run of text is noise. It is not an alternative
  * brand, it is the same brand with the accent withheld.
  *
- * Schemes with three and four colours were drawn and dropped. Past two, every
- * stroke claims the same importance and the mark stops having a subject.
+ * `craie` is `duo` on a dark surface, and it is not a preference — it is the
+ * only way the mark survives one. Both other schemes are ink-on-light: laid on
+ * `ink` or `petrol`, their chevrons go out and the mark loses its brackets. The
+ * blades keep the accent, because vermillon is the one token that carries
+ * across both surfaces.
+ *
+ * Schemes with three and four colours were drawn and dropped. Past two colours,
+ * every stroke claims the same importance and the mark stops having a subject —
+ * which is why `craie` swaps a token rather than adding one.
  */
 export const LOGO_SCHEMES = {
   duo: {
     tones: ["ink", "ink", "vermillon", "vermillon"],
     colours: 2,
     note: "La marque. Les chevrons portent la structure, les lames portent l'accent, le même vermillon que le prompt qui la suit.",
+  },
+  craie: {
+    tones: ["cream", "cream", "vermillon", "vermillon"],
+    colours: 2,
+    note: "La marque sur un fond sombre. Même partition, chevrons en crème : sur l'encre ou le pétrole, « duo » perd ses chevrons et la marque perd ses crochets.",
   },
   encre: {
     tones: ["ink", "ink", "ink", "ink"],

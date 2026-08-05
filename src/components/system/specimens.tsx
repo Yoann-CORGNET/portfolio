@@ -138,7 +138,7 @@ export function TypeSpecimen({
         type="button"
         onClick={copy}
         aria-label={`Copier les classes : ${className}`}
-        className="block w-full overflow-hidden text-left transition-opacity duration-300 hover:opacity-60"
+        className="block w-full cursor-pointer overflow-hidden text-left transition-opacity duration-300 hover:opacity-60"
       >
         <span className={className}>{sample}</span>
       </button>
