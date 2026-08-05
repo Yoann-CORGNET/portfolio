@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/system";
 import { getBaseUrl } from "@/lib/get-base-url";
-import { QRCodeDisplay } from "@/components/qr-code-display";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function QRCodePage() {
   const linktreeUrl = `${getBaseUrl()}/linktree`;
@@ -23,7 +23,15 @@ export default function QRCodePage() {
         </div>
 
         {/* QR Code */}
-        <QRCodeDisplay url={linktreeUrl} />
+        <div className="rounded-lg bg-white p-4">
+          <QRCodeSVG
+            value={linktreeUrl}
+            size={256}
+            level="M"
+            bgColor="#ffffff"
+            fgColor="var(--primary)"
+          />
+        </div>
 
         {/* Instruction */}
         <p className="text-muted-foreground text-center text-sm">

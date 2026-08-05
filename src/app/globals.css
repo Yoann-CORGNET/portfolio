@@ -2,10 +2,10 @@
 @import "tw-animate-css";
 
 /* The site is light-only: there is no `.dark` class on the tree, so this variant
-   never matches. It stays to neutralise the `dark:` utilities that ship with the
-   vendored shadcn components in `src/components/ui` — without it they would fall
-   back to Tailwind's `prefers-color-scheme` variant and dark styling would leak
-   back in for visitors whose OS is set to dark. */
+   never matches. It stays as a guard — it binds `dark:` to a class that is never
+   applied, so any `dark:` utility that gets authored or vendored in is inert.
+   Without it those utilities fall back to Tailwind's `prefers-color-scheme`
+   variant and dark styling leaks in for visitors whose OS is set to dark. */
 @custom-variant dark (&:is(.dark *));
 
 html {
