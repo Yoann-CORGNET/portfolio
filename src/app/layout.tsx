@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Footer } from "@/components/shared/footer";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -11,10 +12,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Développeur Full-Stack Backend | Portfolio",
+  title: "Yoann Corgnet",
   description:
     "Portfolio de développeur full-stack orienté backend - Performance, fiabilité et architecture propre",
-  generator: "v0.app",
   // Ordered from best to last resort: a browser that understands SVG takes the
   // first entry and never rasterises anything. The .ico is only there for the
   // ones that still ask for /favicon.ico by name.
@@ -38,6 +38,7 @@ export default function RootLayout({
     <html lang="fr" className={jetbrainsMono.variable}>
       <body className="font-mono antialiased">
         {children}
+        <Footer />
         <Analytics />
         <SpeedInsights />
       </body>
