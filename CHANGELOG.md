@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.4.1...v0.5.0) (2026-08-06)
+
+
+### Features
+
+* **linktree:** align QR/linktree with the design system, add a contact route ([76aa7be](https://github.com/Yoann-CORGNET/portfolio/commit/76aa7bee1b42e486ec8fd80d93800d5ac435bbc4))
+* **linktree:** align QR/linktree with the design system, add a contact route ([de27072](https://github.com/Yoann-CORGNET/portfolio/commit/de27072b5bc7f133a2b64b0d18c2edfa81f2e8ed))
+
 ## [0.4.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.4.0...v0.4.1) (2026-08-06)
 
 
