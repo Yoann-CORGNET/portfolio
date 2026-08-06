@@ -25,6 +25,11 @@ import { Label } from "./primitives";
  * instead of picking one, because the honest answer to "which one do you want"
  * depends on where it is going: the stylesheet, a canvas, or a tool that has
  * never heard of OKLCh.
+ *
+ * `cursor-none`, not `cursor-pointer`. The crosshair replaces the pointer
+ * rather than sitting next to it — two indicators tracking the same position
+ * would be the tile saying the same thing twice, once as a system-drawn
+ * crosshair and once as the browser's own arrow a few pixels off from it.
  */
 
 /** How long the confirmation holds before the tile goes quiet again, in ms. */
@@ -76,7 +81,7 @@ export function Swatch({ token, warm = false }: Readonly<{ token: FlatToken; war
       onClick={copy}
       onPointerMove={track}
       aria-label={`Copier ${token} en ${format}`}
-      className="group relative z-0 block w-full cursor-pointer text-left outline-offset-2 hover:z-10 focus-visible:z-10 focus-visible:outline-2"
+      className="group relative z-0 block w-full cursor-none text-left outline-offset-2 hover:z-10 focus-visible:z-10 focus-visible:outline-2"
       style={{ outlineColor: FLAT.vermillon }}
     >
       <div

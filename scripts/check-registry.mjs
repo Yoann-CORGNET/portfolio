@@ -26,7 +26,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rel = (p) => relative(root, p);
 
 /** The two namespaces this registry owns. Imports outside them (@/lib/utils,
- *  @/components/ui, node_modules) are somebody else's problem and are skipped. */
+ *  node_modules) are somebody else's problem and are skipped. */
 const OWNED = ["@/lib/design/", "@/components/system/"];
 const aliasToPath = (spec) => resolve(root, "src", spec.slice(2)); // "@/x" -> src/x
 

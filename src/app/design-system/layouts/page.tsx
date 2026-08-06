@@ -11,7 +11,6 @@ import {
   Marquee,
   Reveal,
   Segmented,
-  StaggerHeading,
 } from "@/components/system";
 import { FLAT, dotScreen } from "@/lib/design/tokens";
 
@@ -70,14 +69,12 @@ export default function LayoutsPage() {
         <div className="grid min-h-[88vh] grid-cols-1 md:grid-cols-3">
           <div className="flex flex-col justify-end p-10 md:col-span-2 md:p-16">
             <Label>développeur backend</Label>
-            <StaggerHeading
-              text="YOANN"
-              className="mt-6 text-[clamp(3.5rem,12vw,10rem)] font-bold leading-[0.82] tracking-tighter"
-            />
-            <StaggerHeading
-              text="CORGNET"
-              className="text-[clamp(3.5rem,12vw,10rem)] font-bold leading-[0.82] tracking-tighter"
-            />
+            <h2 className="mt-6 text-[clamp(3.5rem,12vw,10rem)] font-bold leading-[0.82] tracking-tighter">
+              YOANN
+            </h2>
+            <h2 className="text-[clamp(3.5rem,12vw,10rem)] font-bold leading-[0.82] tracking-tighter">
+              CORGNET
+            </h2>
             <Reveal delay={400} className="mt-10 flex flex-wrap gap-x-10 gap-y-2">
               <Label>Go · Rust · TypeScript</Label>
               <Label>Toulouse</Label>
@@ -104,7 +101,6 @@ export default function LayoutsPage() {
               cursor
               influence={110}
               strength={42}
-              plateau={0.55}
             />
           </Frame>
         </div>
@@ -280,10 +276,9 @@ export default function LayoutsPage() {
       <Etude index="08" title="Écrasement d'échelle" rule="Deux tailles, aucune intermédiaire.">
         <FlatBlock tone="cream" className="px-6 py-24 md:px-16">
           <Label style={{ opacity: 0.6 }}>08 · typographie</Label>
-          <StaggerHeading
-            text="DENSE"
-            className="mt-6 text-[clamp(4rem,20vw,16rem)] font-bold leading-[0.8] tracking-tighter"
-          />
+          <h2 className="mt-6 text-[clamp(4rem,20vw,16rem)] font-bold leading-[0.8] tracking-tighter">
+            DENSE
+          </h2>
           <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2">
             <Label style={{ opacity: 0.6 }}>aucune taille intermédiaire</Label>
             <Label style={{ opacity: 0.6 }}>ratio ≈ 25:1</Label>
@@ -400,10 +395,9 @@ export default function LayoutsPage() {
           <div className="grid gap-16 md:grid-cols-12">
             <div className="md:col-span-7">
               <Label style={{ color: FLAT.cream, opacity: 0.55 }}>13 · contact</Label>
-              <StaggerHeading
-                text="On en parle ?"
-                className="mt-8 text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[0.85] tracking-tighter"
-              />
+              <h2 className="mt-8 text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[0.85] tracking-tighter">
+                On en parle ?
+              </h2>
               {/* On the ink block: the two variants built to survive a dark
                   surface. `link` keeps the warm rule; `outline` borrows the
                   block's own cream for its key, and warms to the accent when
@@ -434,7 +428,6 @@ export default function LayoutsPage() {
                       interactive
                       influence={95}
                       strength={34}
-                      plateau={0.55}
                     />
                   </div>
                 </div>

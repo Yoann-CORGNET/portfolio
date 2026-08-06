@@ -11,21 +11,26 @@ import {
   Logo,
   Marquee,
   Meter,
+  OverlapCascade,
+  OverlapTriangle,
   Preview,
   Reveal,
   Rule,
   Segmented,
-  StaggerHeading,
   Stat,
   StatCell,
   StatGrid,
   SurfaceProvider,
   SurfaceSwitch,
   Tag,
+  Tooltip,
+  Watermark,
 } from "@/components/system";
 import type { ActionSize, ActionState, ActionVariant } from "@/components/system";
 import {
   Inventory,
+  OverlapCascadeBench,
+  OverlapTriangleBench,
   Principle,
   Section,
   Spec,
@@ -43,7 +48,8 @@ import {
   type Group,
 } from "@/lib/design/registry";
 import { FLAT, FLAT_TOKENS, TYPE, WARM_TOKENS, dotScreen } from "@/lib/design/tokens";
-import { LOGO_SCHEMES, LOGO_SCHEME_IDS } from "@/lib/design/brand";
+import { LOGO_SCHEMES, LOGO_SCHEME_IDS, type LogoScheme } from "@/lib/design/brand";
+import { cn } from "@/lib/utils";
 import { PALETTES, buildRamp } from "@/lib/design/palette";
 
 export const metadata: Metadata = {
@@ -105,6 +111,28 @@ const ACTION_STATES: {
   { id: "disabled", name: "indispo.", props: { disabled: true } },
   { id: "loading", name: "en cours", props: { loading: true } },
 ];
+
+/**
+ * La marque sur le fond qu'elle demande.
+ *
+ * Une partition dont les chevrons sont en crème n'est lisible que sur un aplat
+ * sombre : elle emporte donc son fond, plutôt que de dépendre du commutateur
+ * d'aperçu de la page. Les autres ne reçoivent rien du tout — un cadre autour
+ * d'une seule des trois cases suggérerait une différence de nature là où il n'y
+ * a qu'une différence de fond.
+ */
+function LogoOnItsGround({
+  scheme,
+  className,
+}: Readonly<{ scheme: LogoScheme; className?: string }>) {
+  const mark = <Logo scheme={scheme} className={cn("shrink-0", className)} />;
+  if (LOGO_SCHEMES[scheme].tones[0] !== "cream") return mark;
+  return (
+    <span className="inline-flex w-fit p-3" style={{ background: FLAT.ink }}>
+      {mark}
+    </span>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Previews                                                           */
@@ -235,6 +263,63 @@ const PREVIEWS: Record<string, React.ReactNode> = {
     </Variants>
   ),
 
+  tooltip: (
+    <Variants columns={1}>
+      {/* Le rembourrage haut n'est pas décoratif : la bulle se pose en
+          `bottom-full`, donc sans place au-dessus elle sortirait du volet et
+          serait rognée. C'est la limite assumée d'une bulle sans mesure. */}
+      <Variant name="au survol">
+        <div className="flex justify-center px-6 pt-24 pb-8">
+          <span
+            tabIndex={0}
+            aria-describedby="ds-tooltip"
+            className="group relative inline-block cursor-help border-b border-dashed border-border text-sm"
+          >
+            un terme à expliciter
+            <Tooltip id="ds-tooltip">
+              <span className="block text-xs leading-relaxed">
+                L&apos;ancre porte <code>group relative</code> et reçoit le focus : la même bulle
+                s&apos;ouvre au survol et au clavier.
+              </span>
+            </Tooltip>
+          </span>
+        </div>
+      </Variant>
+    </Variants>
+  ),
+
+  watermark: (
+    <Variants>
+      {/* Les deux surfaces sont montrées côte à côte parce que c'est tout le
+          sujet du composant : `opacity` est requis, et la même valeur ne rend
+          pas la même chose sur le papier et sur l'encre. Chaque volet porte
+          `relative overflow-hidden` — sans quoi la marque n'aurait rien à quoi
+          s'accrocher et déborderait au lieu d'être rognée.
+
+          La hauteur des deux volets vient du rembourrage du texte, jamais du
+          cadre : `FlatBlock` range ses enfants dans un `relative` intérieur
+          posé dans son propre rembourrage, donc un aplat rembourré décalerait
+          la marque vers le bas. Rembourrer le contenu et laisser le cadre nu
+          garde les deux volets comparables et la marque à sa place. */}
+      <Variant name="sur papier">
+        <div className="relative overflow-hidden border border-border bg-background">
+          <Watermark opacity={0.08}>01</Watermark>
+          <p className="relative px-6 py-16 text-sm leading-relaxed">
+            Encre sur papier : la marque s&apos;impose vite, donc elle s&apos;efface tôt.
+          </p>
+        </div>
+      </Variant>
+      <Variant name="sur aplat">
+        <FlatBlock tone="ink">
+          <Watermark opacity={0.16}>02</Watermark>
+          <p className="relative px-6 py-16 text-sm leading-relaxed">
+            Crème sur encre : à taux égal elle rendrait moins, donc elle monte.
+          </p>
+        </FlatBlock>
+      </Variant>
+    </Variants>
+  ),
+
   bracketed: (
     <Variants columns={1}>
       <Variant name="default">
@@ -249,10 +334,15 @@ const PREVIEWS: Record<string, React.ReactNode> = {
 
   logo: (
     <Variants>
+      {/* Chaque partition est posée sur la surface pour laquelle elle est
+          écrite, et non sur celle du commutateur d'aperçu : « craie » sur le
+          crème est une case vide, ce qui donnerait à voir un défaut là où il n'y
+          en a pas. La règle est dans la partition elle-même — un premier ton
+          crème veut un fond encre. */}
       {LOGO_SCHEME_IDS.map((scheme) => (
         <Variant key={scheme} name={scheme}>
           <div className="flex flex-col gap-5">
-            <Logo scheme={scheme} className="h-20 w-20" />
+            <LogoOnItsGround scheme={scheme} className="h-20 w-20" />
             <p className="text-xs leading-relaxed opacity-70">{LOGO_SCHEMES[scheme].note}</p>
           </div>
         </Variant>
@@ -262,7 +352,7 @@ const PREVIEWS: Record<string, React.ReactNode> = {
         <div className="space-y-5">
           {LOGO_SCHEME_IDS.map((scheme) => (
             <div key={scheme} className="flex items-center gap-3">
-              <Logo scheme={scheme} className="h-9 w-9 shrink-0" />
+              <LogoOnItsGround scheme={scheme} className="h-9 w-9" />
               <span className="text-xl tracking-tight">
                 <span style={{ color: FLAT.vermillon }}>{">"}</span> Yoann CORGNET
               </span>
@@ -383,17 +473,6 @@ const PREVIEWS: Record<string, React.ReactNode> = {
     </Variants>
   ),
 
-  "stagger-heading": (
-    <Variants>
-      <Variant name="35 ms">
-        <StaggerHeading text="YOANN" className="text-5xl font-bold tracking-tighter" />
-      </Variant>
-      <Variant name="80 ms">
-        <StaggerHeading text="YOANN" step={80} className="text-5xl font-bold tracking-tighter" />
-      </Variant>
-    </Variants>
-  ),
-
   marquee: (
     <Variants columns={1}>
       <Variant name="ink · 38 s" padded={false}>
@@ -405,6 +484,38 @@ const PREVIEWS: Record<string, React.ReactNode> = {
           duration={70}
           items={["GRPC", "REDIS", "NATS", "OPENTELEMETRY", "CI/CD"]}
         />
+      </Variant>
+    </Variants>
+  ),
+
+  /* Les figures se documentent au banc plutôt qu'en vignettes : leurs réglages
+     forment un espace continu, borné par des inégalités, et c'est en poussant
+     un curseur jusqu'à la rupture qu'on comprend où sont les bords. Deux
+     variantes fixes suffisent ensuite à montrer ce que le défaut n'est pas. */
+  "overlap-cascade": (
+    <Variants columns={1}>
+      <Variant name="réglage · pousse les curseurs" padded={false}>
+        <OverlapCascadeBench />
+      </Variant>
+      <Variant name="décalage 15 · décalage 22">
+        <div className="grid grid-cols-2 gap-6">
+          <OverlapCascade shift={15} />
+          <OverlapCascade shift={22} />
+        </div>
+      </Variant>
+    </Variants>
+  ),
+
+  "overlap-triangle": (
+    <Variants columns={1}>
+      <Variant name="réglage · pousse les curseurs" padded={false}>
+        <OverlapTriangleBench />
+      </Variant>
+      <Variant name="pointes au centre · skew 0 · faces au centre · skew 45">
+        <div className="grid grid-cols-2 gap-6">
+          <OverlapTriangle skew={0} side={44} radius={16} orientation={90} />
+          <OverlapTriangle side={44} radius={16} orientation={90} />
+        </div>
       </Variant>
     </Variants>
   ),
@@ -434,7 +545,6 @@ const PREVIEWS: Record<string, React.ReactNode> = {
             cursor
             influence={120}
             strength={48}
-            plateau={0.55}
             swirl={0.55}
           />
         </Frame>
@@ -506,10 +616,9 @@ export default function DesignSystemPage() {
         <section className="grid grid-cols-1 md:grid-cols-3">
           <div className="flex flex-col justify-end p-6 py-20 md:col-span-2 md:p-12 md:py-28">
             <Label>bibliothèque · fondations · variantes</Label>
-            <StaggerHeading
-              text="SYSTÈME"
-              className="mt-6 text-[clamp(3rem,11vw,9rem)] font-bold leading-[0.82] tracking-tighter"
-            />
+            <h2 className="mt-6 text-[clamp(3rem,11vw,9rem)] font-bold leading-[0.82] tracking-tighter">
+              SYSTÈME
+            </h2>
             <p className="mt-8 max-w-xl leading-relaxed text-muted-foreground">
               Une texture générative tenue en minorité, des aplats francs pour tout le reste, et un
               seul point chaud par écran. Ce qui suit est la bibliothèque qui applique ces règles,
@@ -528,7 +637,6 @@ export default function DesignSystemPage() {
               interactive
               influence={110}
               strength={42}
-              plateau={0.55}
             />
           </Frame>
         </section>

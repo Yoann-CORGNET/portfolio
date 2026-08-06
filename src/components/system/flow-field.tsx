@@ -48,24 +48,48 @@ export type FlowFieldProps = {
   swirl?: number;
   /**
    * Fraction of the radius that receives the full displacement before the
-   * falloff starts, 0 → 1. Higher flattens the bell into a disc; 0 restores a
-   * classic peaked falloff.
+   * falloff starts, 0 → 1. Low values spread the descent across the whole
+   * radius, which is what keeps the effect soft-edged; high ones turn it into a
+   * disc with a hard rim, and the field then reads as a lens laid over it.
+   *
+   * Deliberately left to its default at every call site on this codebase, so
+   * that the default below is the one place it is set. It used to be pinned to
+   * the same value by all eight of them, which meant editing the default did
+   * nothing at all and the knob really lived in nine places.
    */
   plateau?: number;
   /**
    * Replace the system cursor with a reticle that draws the actual influence
-   * radius. The ring sits on the disturbance and the crosshair on the true
-   * pointer, so the gap between them is the easing lag made visible. Defaults
-   * on, and only takes effect where `interactive` is set; pass `false` to keep
-   * the system cursor over a reactive field.
+   * radius, so the size of what you are moving is visible rather than guessed.
+   * Ring and crosshair now sit on the same point — the disturbance no longer
+   * trails the pointer. Defaults on, and only takes effect where `interactive`
+   * is set; pass `false` to keep the system cursor over a reactive field.
    */
   cursor?: boolean;
   className?: string;
 };
 
 const REVEAL_CHUNKS = 40;
-/** How fast the disturbance catches up with the pointer, per frame. */
-const EASE = 0.12;
+
+/**
+ * The disturbance sits exactly on the pointer — no catch-up.
+ *
+ * It used to trail at 0.12 per frame, which reads as weight but also as lag:
+ * the curves part somewhere behind where you are pointing, and the further you
+ * move the further behind they are. A field that answers the pointer should
+ * answer it where the pointer is.
+ */
+const POSITION_EASE = 1;
+
+/**
+ * Amplitude keeps a ramp, and it is not the same thing as position lag.
+ *
+ * This one governs how fast the displacement rises when the pointer enters the
+ * panel and falls when it leaves. Snapped to 1 it would pop the whole field in
+ * and out on the boundary; kept short it just softens the edge of the effect,
+ * never its position.
+ */
+const AMPLITUDE_EASE = 0.25;
 
 const smoothstep = (t: number) => {
   const x = Math.max(0, Math.min(1, t));
@@ -87,7 +111,7 @@ export function FlowField({
   influence = 170,
   strength = 26,
   swirl = 0.5,
-  plateau = 0.5,
+  plateau = 0.4,
   cursor = true,
   className,
 }: Readonly<FlowFieldProps>) {
@@ -100,6 +124,21 @@ export function FlowField({
   // (a prop tweak, a resize) redraw instantly.
   const revealedRef = useRef(false);
 
+  /* This effect is the whole file's weight (~350 of its 543 lines): a canvas
+     physics/render engine — pointer easing, streamline stroking, dirty-rect
+     repaint, reveal animation, resize handling — where every inner function
+     (`displace`, `strokeLine`, `repaintRect`, `tick`, `render`, …) closes over
+     the same dozen mutable locals (`amp`, `easedX`/`easedY`, `ctx`, `lines`,
+     `width`, `height`, …). None of it is React-specific past the refs.
+
+     TODO: if this file keeps growing, or the engine needs to be reused or
+     unit-tested outside a component, it's a candidate to pull into its own
+     module (e.g. `flow-field-engine.ts`) as a small stateful object —
+     `createFlowFieldEngine(canvas, parent, params) -> { start(), stop() }` —
+     leaving this component as refs + JSX + a `useEffect` that starts/stops
+     it. That's a real restructure (the mutable state needs a home, not just a
+     cut-and-paste), not a mechanical split — left to whoever picks it up to
+     judge the right shape once there's a concrete reason to do it. */
   useEffect(() => {
     const canvas = canvasRef.current;
     const parent = canvas?.parentElement;
@@ -112,11 +151,11 @@ export function FlowField({
 
     // Pointer displacement is direct manipulation: the field only moves while
     // the pointer does. That is a hover state, not autonomous motion, so
-    // reduced-motion does not switch it off — it removes the part that *is*
-    // autonomous (the disturbance easing along after you stop) by following
-    // instantly instead, and takes the amplitude down.
+    // reduced-motion does not switch it off — it drops the amplitude ramp, the
+    // one part that still runs on its own after you stop, and takes the push
+    // down. Position already follows instantly for everyone.
     const pointerEnabled = interactive;
-    const ease = reduceMotion ? 1 : EASE;
+    const ampEase = reduceMotion ? 1 : AMPLITUDE_EASE;
     const maxPush = reduceMotion ? strength * 0.55 : strength;
 
     let lines: Streamline[] = [];
@@ -163,11 +202,22 @@ export function FlowField({
         out[1] = y;
         return;
       }
-      // Flat-topped falloff rather than a peak. A plain `(1 - d/R)²` puts almost
-      // all of the displacement in the few pixels around the centre, so the
-      // bulge reads as a pinprick. Holding full push across the inner `plateau`
-      // of the radius and easing out over the remainder pushes the whole disc
-      // aside instead, which is what makes a small radius feel substantial.
+      // Full push across the inner `plateau` of the radius, then a smoothstep
+      // out over the remainder. The two failure modes sit at the ends of that
+      // one number, and both are visible:
+      //
+      //  — a peak (`plateau` near 0, or a plain `(1 - d/R)²`) puts almost all
+      //    the displacement in the few pixels around the centre, and the bulge
+      //    reads as a pinprick;
+      //  — a wide flat top crams the whole descent into what is left of the
+      //    radius. The interior all moves by the same amount, so the lines keep
+      //    their spacing there and compress in a narrow ring at the edge — that
+      //    ring is a hard rim, and it reads as a magnifying glass rather than a
+      //    disturbance in the field.
+      //
+      // At 0.15 the descent occupies 85 % of the radius instead of 45 %, which
+      // halves the steepness of the shoulder. The push at the centre is
+      // unchanged; only the edge stops being an edge.
       const t = dist / influence;
       const eased = t <= plateau ? 1 : 1 - smoothstep((t - plateau) / Math.max(1e-6, 1 - plateau));
       const f = eased * amp;
@@ -270,9 +320,9 @@ export function FlowField({
     const tick = () => {
       if (cancelled) return;
 
-      easedX += (targetX - easedX) * ease;
-      easedY += (targetY - easedY) * ease;
-      amp += (targetAmp - amp) * ease;
+      easedX += (targetX - easedX) * POSITION_EASE;
+      easedY += (targetY - easedY) * POSITION_EASE;
+      amp += (targetAmp - amp) * ampEase;
 
       const rect = currentRect();
       const dirty = union(previousRect, rect);

@@ -164,7 +164,7 @@
       "name": "motion",
       "type": "registry:ui",
       "title": "Mouvement",
-      "description": "Reveal, StaggerHeading, Marquee. Le mouvement sert à arriver, jamais à attirer l'œil en boucle : tout est one-shot, sauf le bandeau défilant qui tient dans quelques dizaines de pixels de haut.",
+      "description": "Reveal, Marquee. Le mouvement sert à arriver, jamais à attirer l'œil en boucle : tout est one-shot, sauf le bandeau défilant qui tient dans quelques dizaines de pixels de haut.",
       "registryDependencies": ["utils", "@yoann/design-tokens"],
       "css": {
         "@keyframes marquee": {
@@ -237,6 +237,34 @@
       ]
     },
     {
+      "name": "overlap",
+      "type": "registry:ui",
+      "title": "Figures de recouvrement",
+      "description": "OverlapCascade et OverlapTriangle. Trois ensembles qui se chevauchent, et l'intersection peinte sous les filets pour que les frontieres la traversent. La zone commune est obtenue par decoupage de polygones convexes (Sutherland-Hodgman), donc exacte quels que soient les reglages, y compris quand les carres sont pivotes et qu'elle devient un pentagone ou un hexagone.",
+      "registryDependencies": ["utils", "@yoann/design-tokens", "@yoann/primitives"],
+      "files": [
+        {
+          "path": "src/components/system/overlap.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/overlap.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pipeline-flow",
+      "type": "registry:ui",
+      "title": "Pipeline a etapes",
+      "description": "PipelineFlow. Une suite d'etapes, chacune une nappe de cartes reliees par des peignes qui montrent combien de cartes alimentent combien d'autres — dessine en chronologie sur bureau et deplie en liste sur mobile. Ni le nombre d'etapes ni le nombre de cartes n'est fige ; une etape choisit son style de survol (tip ou unfold) et si ses cartes sont une face ou deux cote a cote.",
+      "registryDependencies": ["utils", "@yoann/design-tokens", "@yoann/primitives"],
+      "files": [
+        {
+          "path": "src/components/system/pipeline-flow.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/pipeline-flow.tsx"
+        }
+      ]
+    },
+    {
       "name": "system",
       "type": "registry:base",
       "title": "Système complet",
@@ -252,6 +280,8 @@
         "@yoann/motion",
         "@yoann/controls",
         "@yoann/layout",
+        "@yoann/overlap",
+        "@yoann/pipeline-flow",
         "@yoann/flow-field"
       ],
       "files": [
