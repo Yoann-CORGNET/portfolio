@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useId, useState } from "react";
+import { Check } from "lucide-react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { Action, Label } from "@/components/system";
 import { sendMessage } from "@/lib/contact-action";
 import {
@@ -67,6 +68,7 @@ type FieldProps = Readonly<{
   name: ContactField;
   label: string;
   shape: FormShape;
+  value: string;
   type?: "text" | "email";
   placeholder?: string;
   multiline?: boolean;
@@ -81,6 +83,7 @@ function Field({
   name,
   label,
   shape,
+  value,
   type = "text",
   placeholder,
   multiline = false,
@@ -103,9 +106,14 @@ function Field({
     multiline && "resize-y leading-relaxed",
   );
 
+  // Controlled, not defaultValue: React resets uncontrolled form fields
+  // once the action settles, including on failure — a rejected submission
+  // would otherwise wipe what the visitor just typed. Owning the value
+  // here is what lets a failed send leave the text in place.
   const shared = {
     id,
     name,
+    value,
     placeholder,
     onBlur: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       onLeave(name, event.target.value),
@@ -158,12 +166,25 @@ function Honeypot() {
 /* ------------------------------------------------------------------ */
 
 function Status({ state }: Readonly<{ state: ContactState }>) {
+  if (state.status === "ok") {
+    return (
+      <p
+        aria-live="polite"
+        className="flex min-h-[1.25rem] items-center gap-2 text-sm font-medium"
+        style={{ color: "var(--f-ok)" }}
+      >
+        <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
+        {state.message}
+      </p>
+    );
+  }
+
   return (
     <p
       aria-live="polite"
       className="min-h-[1.25rem] text-sm"
       style={{
-        color: state.status === "error" ? "var(--f-error)" : "var(--f-ok)",
+        color: "var(--f-error)",
         opacity: state.status === "idle" ? 0 : 1,
       }}
     >
@@ -185,6 +206,15 @@ export function ContactForm({
 }>) {
   const [state, formAction, pending] = useActionState(sendMessage, CONTACT_IDLE);
 
+  // Fields are controlled from here rather than left uncontrolled, so a
+  // failed submission — validation error or delivery failure — leaves
+  // what the visitor typed in place instead of the form clearing itself.
+  const [values, setValues] = useState<Record<ContactField, string>>({
+    name: "",
+    email: "",
+    message: "",
+  });
+
   // A key is only present once the field has been left once — this
   // distinguishes "not yet checked" (key absent) from "checked, no error"
   // (key present, value "").
@@ -194,6 +224,7 @@ export function ContactForm({
     setLocal((previous) => ({ ...previous, [field]: validateField(field, value.trim()) ?? "" }));
 
   const revise = (field: ContactField, value: string) => {
+    setValues((previous) => ({ ...previous, [field]: value }));
     if (local[field] !== undefined) check(field, value);
   };
 
@@ -201,6 +232,17 @@ export function ContactForm({
   // empty — clears a server error as soon as the field is fixed locally.
   const errorFor = (field: ContactField) =>
     local[field] !== undefined ? local[field] || undefined : state.errors[field];
+
+  // Only a genuine send clears the form — an error, including the throttled
+  // one, keeps the text so the visitor isn't asked to retype it.
+  const previousStatus = useRef(state.status);
+  useEffect(() => {
+    if (state.status === "ok" && previousStatus.current !== "ok") {
+      setValues({ name: "", email: "", message: "" });
+      setLocal({});
+    }
+    previousStatus.current = state.status;
+  }, [state.status]);
 
   return (
     <form
@@ -215,6 +257,7 @@ export function ContactForm({
           name="name"
           label="Nom"
           shape={shape}
+          value={values.name}
           placeholder="Ada Lovelace"
           error={errorFor("name")}
           onLeave={check}
@@ -225,6 +268,7 @@ export function ContactForm({
           label="Email"
           type="email"
           shape={shape}
+          value={values.email}
           placeholder="ada@exemple.fr"
           error={errorFor("email")}
           onLeave={check}
@@ -236,6 +280,7 @@ export function ContactForm({
         label="Le projet"
         shape={shape}
         multiline
+        value={values.message}
         placeholder="Décrivez votre idée, votre défi ou ce qui vous amène ici..."
         error={errorFor("message")}
         onLeave={check}
