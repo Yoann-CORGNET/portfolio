@@ -113,7 +113,13 @@ export function ContactSection() {
         <div className="mx-auto grid max-w-6xl gap-16 px-6 md:grid-cols-12">
           <div className="md:col-span-7">
             <ContactHook className={HOOK_SIZE_COLUMN} />
-            <ContactPupitre className="mt-10" aside={<ContactProfiles />} />
+            {/* Bleeds past the section's `px-6` gutter on mobile so the form
+                reaches the screen edges; `md:` reverts to the grid column
+                once there's room beside it for the texture panel. */}
+            <ContactPupitre
+              className="-mx-6 mt-10 w-[calc(100%+3rem)] md:mx-0 md:w-full"
+              aside={<ContactProfiles />}
+            />
           </div>
 
           <div className="flex flex-col md:col-span-5">
