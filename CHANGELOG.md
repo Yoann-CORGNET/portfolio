@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.4.0...v0.4.1) (2026-08-06)
+
+
+### Bug Fixes
+
+* **contact:** keep fields on failure, log deliveries, guard duplicates ([a6b74e8](https://github.com/Yoann-CORGNET/portfolio/commit/a6b74e8168e19e95d21874f2affdeaf17e065007))
+* **contact:** keep fields on failure, log deliveries, guard duplicates ([67cbb11](https://github.com/Yoann-CORGNET/portfolio/commit/67cbb118c6f6044f403e2947e7607181ed77ea59))
+
 ## [0.4.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.3.0...v0.4.0) (2026-08-06)
 
 
