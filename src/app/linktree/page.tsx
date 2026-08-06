@@ -1,115 +1,128 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "@/components/system";
-import { Home, Linkedin, Github, Mail, FileDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, FileDown, Github, Home, Linkedin, MessageSquare } from "lucide-react";
+import { FlatBlock, Label, Logo } from "@/components/system";
+import type { FlatToken } from "@/lib/design/tokens";
+import { cn } from "@/lib/utils";
 
-const links = [
+export const metadata: Metadata = {
+  title: "Liens — Yoann CORGNET",
+  description: "Tous les liens de Yoann Corgnet.",
+};
+
+type LinkItem = {
+  name: string;
+  value: string;
+  href: string;
+  icon: typeof Home;
+  tone: FlatToken;
+  external?: boolean;
+  download?: boolean;
+};
+
+const LINKS: readonly LinkItem[] = [
   {
     name: "Portfolio",
     value: "yoann-corgnet.dev",
     href: "/",
     icon: Home,
-    external: false,
-    download: false,
+    tone: "rust",
   },
   {
     name: "LinkedIn",
     value: "linkedin.com/in/yoann-corgnet",
     href: "https://linkedin.com/in/yoann-corgnet",
     icon: Linkedin,
+    tone: "petrol",
     external: true,
-    download: false,
   },
   {
     name: "GitHub",
     value: "github.com/yoann-corgnet",
     href: "https://github.com/yoann-corgnet",
     icon: Github,
+    tone: "charcoal",
     external: true,
-    download: false,
   },
   {
-    name: "Email",
-    value: "ycorgnet@et.esiea.fr",
-    href: "mailto:ycorgnet@et.esiea.fr",
-    icon: Mail,
-    external: true,
-    download: false,
+    name: "Contact",
+    value: "Écrire un message",
+    href: "/contact",
+    icon: MessageSquare,
+    tone: "moss",
   },
   {
     name: "CV",
     value: "Télécharger mon CV",
     href: "/Yoann-CORGNET_CV.pdf",
     icon: FileDown,
-    external: false,
+    tone: "amber",
     download: true,
   },
 ];
 
+function LinkRow({ link }: Readonly<{ link: LinkItem }>) {
+  return (
+    <a
+      href={link.href}
+      target={link.external ? "_blank" : undefined}
+      rel={link.external ? "noopener noreferrer" : undefined}
+      download={link.download || undefined}
+      className="group block"
+    >
+      <FlatBlock
+        tone={link.tone}
+        className={cn(
+          "transition-transform duration-300 ease-out group-hover:scale-[1.015]",
+          "motion-reduce:transition-none motion-reduce:group-hover:scale-100",
+        )}
+      >
+        <div className="flex items-center justify-between gap-4 px-6 py-5">
+          <div className="flex items-center gap-4">
+            <link.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-medium tracking-tight">{link.name}</p>
+              <Label tone="inherit" className="opacity-70">
+                {link.value}
+              </Label>
+            </div>
+          </div>
+          <ArrowUpRight
+            className={cn(
+              "h-4 w-4 shrink-0 transition-transform duration-300",
+              "group-hover:-translate-y-0.5 group-hover:translate-x-0.5",
+            )}
+          />
+        </div>
+      </FlatBlock>
+    </a>
+  );
+}
+
 export default function LinktreePage() {
   return (
-    <div className="relative min-h-screen flex flex-col items-center px-6 py-12">
-      {/* Grid background */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+    <div className="flex h-dvh flex-col">
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-10 px-6">
+        <Link href="/" className="flex flex-col items-center gap-4">
+          <Logo label="Yoann CORGNET" className="h-10 w-10" />
+          <span className="text-xl tracking-tight">Yoann CORGNET</span>
+        </Link>
 
-      <div className="relative z-10 w-full max-w-lg mx-auto flex flex-col items-center gap-8">
-        {/* Header */}
-        <div className="flex flex-col items-center gap-4">
-          <Link href="/">
-            <Logo label="Yoann CORGNET" className="h-10 w-10" />
-          </Link>
-          <h1 className="text-2xl font-bold">
-            <span className="text-primary">{">"}</span> Yoann CORGNET
-          </h1>
+        <div className="flex w-full flex-col gap-3">
+          {LINKS.map((link) => (
+            <LinkRow key={link.name} link={link} />
+          ))}
         </div>
-
-        {/* Terminal card */}
-        <div className="w-full rounded-lg bg-card border border-border overflow-hidden">
-          {/* Terminal header */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-destructive/60" />
-              <div className="w-3 h-3 rounded-full bg-chart-4/60" />
-              <div className="w-3 h-3 rounded-full bg-primary/60" />
-            </div>
-            <span className="text-sm text-muted-foreground ml-2">links.sh</span>
-          </div>
-
-          {/* Content */}
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-6 text-sm">
-              <span className="text-primary">$</span>
-              <span className="text-muted-foreground">cat ~/links</span>
-            </div>
-
-            <div className="space-y-3">
-              {links.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  download={link.download || undefined}
-                  className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <link.icon className="h-5 w-5 text-primary" />
-                    <div>
-                      <span className="text-foreground font-medium">{link.name}</span>
-                      <p className="text-sm text-muted-foreground">{link.value}</p>
-                    </div>
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <p className="text-xs text-muted-foreground">
-          <span className="text-primary">{">"}</span> Fait avec Next.js & Tailwind CSS
-        </p>
       </div>
+
+      <footer className="px-6 py-10">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-baseline gap-x-8 gap-y-2">
+          <Label>© Yoann Corgnet</Label>
+          <Link href="/design-system" className="transition-opacity duration-300 hover:opacity-70">
+            <Label>design system</Label>
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
