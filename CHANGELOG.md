@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.5.0...v0.6.0) (2026-08-07)
+
+
+### Features
+
+* **type:** move titles and body text off mono to Archivo/IBM Plex Sans ([d51e8ee](https://github.com/Yoann-CORGNET/portfolio/commit/d51e8eef690cbab43bf1e3a74211667feea0a7c3))
+* **type:** titles and body text off mono to Archivo/IBM Plex Sans ([23b6e8b](https://github.com/Yoann-CORGNET/portfolio/commit/23b6e8b3bd901f9bc05550d9b2faadb8e35a323e))
+
 ## [0.5.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.4.1...v0.5.0) (2026-08-06)
 
 
