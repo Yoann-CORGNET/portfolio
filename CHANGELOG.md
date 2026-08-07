@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.6.1...v0.7.0) (2026-08-07)
+
+
+### Features
+
+* add 404 page ([1828f82](https://github.com/Yoann-CORGNET/portfolio/commit/1828f8292414c31a373caec2ed394c38be1105bd))
+* add 404 page ([adbbbb8](https://github.com/Yoann-CORGNET/portfolio/commit/adbbbb8158e7dae0338c89791e42e9930032313c))
+
 ## [0.6.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.6.0...v0.6.1) (2026-08-07)
 
 
