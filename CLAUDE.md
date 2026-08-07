@@ -123,7 +123,15 @@ them (no hardcoded values, keep `globals.css`/`tokens.ts` in sync) are in `docs/
   state casts a **hard-edged** offset block (`box-shadow` with zero blur), collapsed on press. It is
   the only thing in the system that casts anything, documented in place, and earns it by being the
   thing you press.
-- Both `--font-sans` and `--font-mono` map to JetBrains Mono — the entire site uses monospace.
+- Three type roles, applied by HTML tag rather than by hand-added classes, in `@layer base` of
+  `globals.css`: `<h1>` gets the mono display treatment (uppercase, tight leading/tracking — the
+  main-title look is the tag's default, not something a page opts into); `<h2>`–`<h4>` default to
+  `--font-heading` (Archivo); `<p>` not carrying `tabular-nums` defaults to `--font-text` (IBM Plex
+  Sans). Everything else (nav, chips, labels, digits, buttons) stays on the site-wide mono default
+  (`--font-sans`/`--font-mono`, both JetBrains Mono, set via `font-mono` on `<body>`). An element
+  whose sizing is hand-tuned to JetBrains Mono's fixed glyph advance (search for `chasse` in
+  comments) opts back into `font-mono` explicitly rather than the reverse — keep that convention
+  when adding new metric-tuned type rather than fighting the cascade with more classes.
 - Custom CSS animations: `animate-blink` (terminal cursor), `marquee` (ticker), `scanlines` (retro
   effect).
 - `src/app/globals.css` is the only stylesheet.

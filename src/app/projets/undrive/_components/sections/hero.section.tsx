@@ -12,7 +12,7 @@ export function HeroSection() {
           <h1 className="mt-8 text-[clamp(3rem,11vw,7.5rem)] font-bold leading-[0.85] tracking-tighter">
             Undrive
           </h1>
-          <p className="mt-10 max-w-xl text-[clamp(1.5rem,4vw,2.5rem)] font-bold leading-[1.02] tracking-tighter">
+          <p className="mt-10 max-w-xl font-heading text-[clamp(1.5rem,4vw,2.5rem)] font-bold leading-[1.02] tracking-tighter">
             Comment transforme-t-on une idée en produit ?
           </p>
           <p className="mt-8 max-w-xl leading-relaxed" style={{ opacity: 0.62 }}>

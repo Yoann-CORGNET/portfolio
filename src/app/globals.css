@@ -71,6 +71,10 @@ html {
 @theme inline {
   --font-sans: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  /* Titres et texte courant explicitement marqués (`font-heading`,
+     `font-text`) — tout le reste garde le mono par défaut ci-dessus. */
+  --font-heading: var(--font-archivo), "Archivo", sans-serif;
+  --font-text: var(--font-ibm-plex-sans), "IBM Plex Sans", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -118,6 +122,32 @@ html {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* The main title, by tag rather than by class: any `<h1>` gets the display
+     treatment for free, so a title can't end up unstyled or accidentally in
+     the wrong font. A monospace `text-transform` costs nothing here — every
+     glyph has the same advance, capital or not — which is what makes the
+     transform safe even on `<h1>`s whose width is hand-tuned to that advance. */
+  h1 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+  }
+  /* Section titles default to the heading face; anything explicitly measured
+     against mono's fixed advance (a hand-tuned `whitespace-nowrap` block, for
+     instance) opts back into `font-mono` locally rather than the reverse. */
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+  }
+  /* Body copy. Digit displays keep `tabular-nums` for column alignment, so
+     excluding it here doubles as excluding them from the switch. */
+  p:not(.tabular-nums) {
+    font-family: var(--font-text);
   }
 }
 

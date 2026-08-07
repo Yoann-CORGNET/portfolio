@@ -112,26 +112,26 @@ export const WARM_TOKENS: FlatToken[] = ["vermillon", "rust", "amber", "sand"];
 export const TYPE = [
   {
     name: "display",
-    className: "text-[clamp(2.5rem,8vw,6rem)] font-bold leading-[0.82] tracking-tighter",
-    note: "Titres. Interlignage sous 1, crénage négatif.",
+    className: "font-mono text-[clamp(2.5rem,8vw,6rem)] font-bold leading-[0.82] tracking-tighter",
+    note: "Le seul texte du site en capitales, et le seul dont la taille est calée sur la chasse fixe de JetBrains Mono. Reste mono par construction — voir hero.section.tsx.",
     sample: "YOANN",
   },
   {
     name: "heading",
-    className: "text-3xl leading-tight tracking-tight",
-    note: "Seul palier intermédiaire, réservé aux aplats.",
+    className: "font-heading text-3xl font-bold leading-tight tracking-tight",
+    note: "Archivo. Seul palier intermédiaire, réservé aux aplats.",
     sample: "Systèmes distribués",
   },
   {
     name: "body",
-    className: "text-base leading-relaxed",
-    note: "Texte courant. Rare : la plupart des blocs n'en ont pas.",
+    className: "font-text text-base leading-relaxed",
+    note: "IBM Plex Sans. Texte courant. Rare : la plupart des blocs n'en ont pas.",
     sample: "Le code se lit plus souvent qu'il ne s'écrit.",
   },
   {
     name: "label",
-    className: "text-[10px] uppercase tracking-[0.2em]",
-    note: "Toute annotation du système. Il n'y a pas de second petit palier.",
+    className: "font-mono text-[10px] tracking-[0.1em]",
+    note: "Mono, sans capitales. Toute annotation du système. Il n'y a pas de second petit palier.",
     sample: "développeur backend",
   },
 ] as const;
