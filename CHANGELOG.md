@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.6.0...v0.6.1) (2026-08-07)
+
+
+### Performance Improvements
+
+* defer FlowField streamline build off the main thread ([efb9cf2](https://github.com/Yoann-CORGNET/portfolio/commit/efb9cf210d064f5a8a16b66228ef096c134cabb0))
+
 ## [0.6.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.5.0...v0.6.0) (2026-08-07)
 
 
