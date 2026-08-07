@@ -31,7 +31,7 @@ export const HOOK_SIZE_COLUMN = "text-[clamp(1rem,4.8vw,2.3rem)]";
 
 export function ContactHook({ className }: Readonly<{ className?: string }>) {
   return (
-    <h2 className={cn("font-bold leading-[0.9] tracking-tighter", className)}>
+    <h2 className={cn("font-mono font-bold leading-[0.9] tracking-tighter", className)}>
       {HOOK.map((line) => (
         <span key={line} className="block whitespace-nowrap">
           {line}

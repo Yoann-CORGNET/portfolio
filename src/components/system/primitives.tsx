@@ -26,8 +26,8 @@ const LABEL_TONE: Record<LabelTone, string> = {
 };
 
 /**
- * The system's only small type. Every annotation on the page is this: 10px,
- * uppercase, widely tracked. There is deliberately no second small size — the
+ * The system's only small type. Every annotation on the page is this: 10px
+ * mono, lightly tracked. There is deliberately no second small size — the
  * scale jumps straight from here to display.
  */
 export function Label({
@@ -47,7 +47,7 @@ export function Label({
   return (
     <span
       className={cn(
-        "text-[10px] uppercase tracking-[0.2em]",
+        "font-mono text-[10px] tracking-[0.1em]",
         LABEL_TONE[tone],
         numeric && "tabular-nums",
         className,

@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Footer } from "@/components/shared/footer";
@@ -9,6 +9,22 @@ import "./globals.css";
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
+});
+
+// Titres (`font-heading`). Le mono reste la police par défaut du site — voir
+// `font-mono` sur `<body>` plus bas — Archivo et Plex Sans ne s'appliquent
+// qu'aux titres et au texte courant explicitement marqués comme tels.
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-archivo",
+});
+
+// Texte courant (`font-text`).
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-ibm-plex-sans",
 });
 
 export const metadata: Metadata = {
@@ -35,7 +51,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={jetbrainsMono.variable}>
+    <html
+      lang="fr"
+      className={`${jetbrainsMono.variable} ${archivo.variable} ${ibmPlexSans.variable}`}
+    >
       <body className="font-mono antialiased">
         {children}
         <Footer />

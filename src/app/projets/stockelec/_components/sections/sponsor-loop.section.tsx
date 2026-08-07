@@ -29,9 +29,11 @@ export function SponsorLoopSection() {
             className={SECTION_TITLE}
           />
 
-          {/* 9rem de retrait : la plus longue amorce fait onze caractères,
-              JetBrains Mono chasse 0,6em (118,8px au corps de la prose) ; le
-              cran en dessous (8rem) laisserait moins d'un pixel de gouttière. */}
+          {/* 9rem de retrait : généreux plutôt que calculé au glyphe près,
+              pour ne pas dépendre des métriques d'une police en particulier.
+              La plus longue amorce ("Il corrige.", onze caractères) tient
+              large dedans même en IBM Plex Sans, plus étroite en moyenne que
+              JetBrains Mono à corps égal. */}
           <div className="mt-12 max-w-2xl space-y-8">
             {LOOP.map((step) => (
               <p key={step.beat} className="relative text-lg leading-relaxed sm:pl-36">

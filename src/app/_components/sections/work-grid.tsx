@@ -96,7 +96,7 @@ function WorkTileBody({ item }: Readonly<{ item: Work }>) {
       <div className="mt-auto pt-10">
         <p
           className={cn(
-            "font-bold leading-[0.95] tracking-tighter",
+            "font-heading font-bold leading-[0.95] tracking-tighter",
             item.nameSize ?? WORK_NAME_SIZE,
           )}
         >
