@@ -442,11 +442,24 @@ export function FlowField({
     // The reveal should happen when the visitor reaches the texture, not while
     // it sits unseen at the bottom of the page.
     let started = false;
+    let idleHandle: number | undefined;
+    const scheduleIdle =
+      typeof window.requestIdleCallback === "function"
+        ? window.requestIdleCallback.bind(window)
+        : (cb: () => void) => window.setTimeout(cb, 1);
+    const cancelIdle =
+      typeof window.cancelIdleCallback === "function"
+        ? window.cancelIdleCallback.bind(window)
+        : window.clearTimeout.bind(window);
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
           started = true;
-          render(true);
+          // buildStreamlines is the expensive part of render(): seeding and
+          // integrating hundreds of curves is real main-thread work. Run it off
+          // the idle queue so it never contends with the browser's first paint
+          // of the (already server-rendered, static) content sitting next to it.
+          idleHandle = scheduleIdle(() => render(true));
           io.disconnect();
         }
       },
@@ -478,6 +491,7 @@ export function FlowField({
       cancelAnimationFrame(frame);
       cancelAnimationFrame(pointerFrame);
       window.clearTimeout(resizeTimer);
+      if (idleHandle !== undefined) cancelIdle(idleHandle);
       io.disconnect();
       ro.disconnect();
       parent.removeEventListener("pointermove", onPointerMove);
