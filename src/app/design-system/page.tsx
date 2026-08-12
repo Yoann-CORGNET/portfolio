@@ -39,6 +39,7 @@ import {
   Variants,
 } from "@/components/system/docs";
 import { MotionScale, TypeSpecimen } from "@/components/system/specimens";
+import { TerminalDefaultDemo, TerminalSpecialisedDemo } from "./_components/terminal-demo";
 import {
   GROUP_ORDER,
   GROUPS,
@@ -455,6 +456,20 @@ const PREVIEWS: Record<string, React.ReactNode> = {
     <Variants columns={1}>
       <Variant name="pilote tous les aperçus de la page">
         <SurfaceSwitch />
+      </Variant>
+    </Variants>
+  ),
+
+  // Both are live: type in them. The pair is the point — the second is the
+  // first with a disk and two commands, which is all a specialised terminal
+  // ever is.
+  terminal: (
+    <Variants columns={1}>
+      <Variant name="shell par défaut — <Terminal {...useShell()} />" padded={false}>
+        <TerminalDefaultDemo />
+      </Variant>
+      <Variant name="spécialisé — disk et commandes propres" padded={false}>
+        <TerminalSpecialisedDemo />
       </Variant>
     </Variants>
   ),

@@ -412,6 +412,52 @@ export const REGISTRY: ComponentSpec[] = [
     props: [],
   },
 
+  {
+    id: "terminal",
+    name: "Terminal",
+    group: "control",
+    file: "terminal.tsx",
+    client: true,
+    purpose:
+      "Un émulateur, au sens où xterm en est un : il possède la fenêtre, le journal et la frontière touche-vers-ligne, et ne connaît aucune commande — il ne sait pas distinguer « ls » de « coffee », il tend la ligne brute à onRun. L'édition de ligne (rappel aux flèches, complétion à Tab, Ctrl+C, Ctrl+L) est séparée dans useReadline (terminal-readline.ts), pour la raison qui fait de GNU readline une bibliothèque et non un morceau de bash. Les commandes, elles, viennent de @/lib/shell : useShell() rend un shell complet — lexeur avec guillemets et $?, système de fichiers, onze commandes — et sa configuration (user, hostname, disk, bin, motd) spécialise ce défaut au lieu de le remplacer. C'est ce qui fait de la page /teapot une configuration de ce composant et non une réécriture.",
+    variants: ["shell par défaut — useShell()", "spécialisé — disk et commandes propres"],
+    props: [
+      {
+        name: "prompt",
+        type: "string",
+        note: "La chaîne d'invite. Recalculée par l'appelant : l'émulateur ne porte aucune notion de dossier courant ni d'hôte.",
+      },
+      {
+        name: "completions",
+        type: "readonly string[]",
+        note: "Les noms que Tab peut compléter. L'appelant les dérive de ce qu'il sait vraiment exécuter, donc les deux ne peuvent pas diverger.",
+      },
+      {
+        name: "onRun",
+        type: "(input, io) => ReactNode | null | Promise<…>",
+        note: "Exécute une ligne brute. Découper la ligne en commande et arguments est le travail du shell, pas du composant. io porte write, clear et l'historique du lecteur de ligne.",
+      },
+      {
+        name: "banner",
+        type: "ReactNode",
+        fallback: "aucun",
+        note: "À l'écran avant la première commande. Un shell de connexion y écrirait son motd ; l'émulateur affiche seulement ce qu'on lui donne.",
+      },
+      {
+        name: "title",
+        type: "string",
+        fallback: '"Terminal"',
+        note: "Le titre de la barre de fenêtre.",
+      },
+      {
+        name: "height",
+        type: "string",
+        fallback: '"h-96"',
+        note: "La hauteur du panneau. C'est le journal qui défile, jamais le panneau qui grandit.",
+      },
+    ],
+  },
+
   /* ---------------------------------------------------------------- */
   /* Mouvement                                                        */
   /* ---------------------------------------------------------------- */
