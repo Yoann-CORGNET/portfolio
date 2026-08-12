@@ -35,3 +35,13 @@ export type {
 
 export { FlowField } from "./flow-field";
 export type { FlowFieldProps, FlowFieldFade } from "./flow-field";
+
+/**
+ * Two pieces that are one component: `Terminal` is the emulator, `useReadline`
+ * the line discipline it runs on. Neither runs a command — the batteries are in
+ * `@/lib/shell`, where `<Terminal {...useShell()} />` is a working machine.
+ */
+export { Terminal } from "./terminal";
+export type { TerminalIo } from "./terminal";
+export { useReadline } from "./terminal-readline";
+export type { Readline } from "./terminal-readline";
