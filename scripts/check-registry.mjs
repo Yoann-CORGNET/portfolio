@@ -25,9 +25,13 @@ import { dirname, resolve, relative } from "node:path";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rel = (p) => relative(root, p);
 
-/** The two namespaces this registry owns. Imports outside them (@/lib/utils,
- *  node_modules) are somebody else's problem and are skipped. */
-const OWNED = ["@/lib/design/", "@/components/system/"];
+/** The namespaces this registry owns; imports outside them are skipped.
+ *
+ *  Matched against the *resolved* file, not the specifier: "./vfs" is as
+ *  in-namespace as "@/lib/shell/vfs", and testing the raw specifier skipped
+ *  every relative import — leaving whole items uncovered. */
+const OWNED = ["src/lib/design/", "src/lib/shell/", "src/components/system/"];
+const isOwned = (file) => OWNED.some((ns) => rel(file).startsWith(ns));
 const aliasToPath = (spec) => resolve(root, "src", spec.slice(2)); // "@/x" -> src/x
 
 /** Resolves a module specifier to a concrete .ts/.tsx file, or null. */
@@ -91,9 +95,8 @@ for (const spec of importSpecs(barrel)) {
 for (const file of shipped) {
   if (!/\.(ts|tsx)$/.test(file) || !existsSync(file)) continue;
   for (const spec of importSpecs(file)) {
-    if (!OWNED.some((ns) => spec.startsWith(ns))) continue;
     const target = resolveFile(file, spec);
-    if (target && !shipped.has(target)) {
+    if (target && isOwned(target) && !shipped.has(target)) {
       errors.push(
         `[C] ${rel(file)} imports "${spec}" (${rel(target)}), which no registry item ships.`,
       );
