@@ -50,3 +50,13 @@ next-env.d.ts
 eslint-report.json
 .scannerwork/
 
+# LaTeX build artifacts of the CV — public/Yoann-CORGNET_CV.tex is compiled in
+# place by the editor (latexmk + synctex). Only the .tex source and the final
+# .pdf are tracked; everything else is regenerated on every build.
+/public/*.aux
+/public/*.fdb_latexmk
+/public/*.fls
+/public/*.log
+/public/*.out
+/public/*.synctex*
+

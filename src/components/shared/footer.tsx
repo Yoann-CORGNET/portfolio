@@ -8,7 +8,7 @@ import { Label } from "@/components/system";
 // footer together fill exactly one screen with nothing to scroll to — the
 // point of a code meant to be read from a phone at arm's length, and of a
 // link list meant to be skimmed in one glance.
-const NO_FOOTER_ROUTES = new Set(["/qrcode", "/linktree"]);
+const NO_FOOTER_ROUTES = new Set(["/qrcode", "/qrcode/cv", "/linktree"]);
 
 export function Footer() {
   const pathname = usePathname();
