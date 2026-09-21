@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.7.0...v0.8.0) (2026-09-21)
+
+
+### Features
+
+* **qrcode:** add CV download QR page and update CV ([3b1a225](https://github.com/Yoann-CORGNET/portfolio/commit/3b1a225612018d65d7e07363b9a763c4c6537e0a))
+* **qrcode:** add CV download QR page with a flip link to /qrcode ([908f4b4](https://github.com/Yoann-CORGNET/portfolio/commit/908f4b4fa2498c2489db55bd94aee46e444fbcb8))
+
 ## [0.7.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.6.1...v0.7.0) (2026-08-07)
 
 
