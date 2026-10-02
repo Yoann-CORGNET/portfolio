@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.8.0...v0.9.0) (2026-10-02)
+
+
+### Features
+
+* **cv:** add school logos to education and switch to personal email ([43c9531](https://github.com/Yoann-CORGNET/portfolio/commit/43c95310bc8d41d4ee62a388fcd69726d322d3a8))
+* **cv:** logos des écoles et email personnel ([69ab912](https://github.com/Yoann-CORGNET/portfolio/commit/69ab9121fcac56c3f3a3f4b7b97bec916f398f72))
+
 ## [0.8.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.7.0...v0.8.0) (2026-09-21)
 
 
