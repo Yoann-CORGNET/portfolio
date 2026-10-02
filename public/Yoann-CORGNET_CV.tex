@@ -103,6 +103,20 @@
     \end{minipage}    
     }
 
+% joblong with a school logo in a fixed-width column, so titles stay aligned
+\newenvironment{joblogo}[4]
+    {
+    \begin{tabularx}{\linewidth}{@{}p{2.5cm} X r@{}}
+    \raisebox{-0.3\height}{\includegraphics[height=#1]{#2}} & \textbf{#3} & #4 \\[3.75pt]
+    \end{tabularx}
+    \begin{minipage}[t]{\linewidth}
+    \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=2.5pt,label=--]
+    }
+    {
+    \end{itemize}
+    \end{minipage}
+    }
+
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
 %----------------------------------------------------------------------------------------
@@ -125,7 +139,7 @@
     \large{Postes visés : Ingénieur Logiciel ou Ingénieur DevOps} \\[7.5pt]
     \href{https://www.linkedin.com/in/yoann-corgnet/}{\raisebox{-0.05\height}\faLinkedin\ LinkedIn} \ $|$ \
     \href{https://github.com/Yoann-CORGNET}{\raisebox{-0.05\height}\faGithub\ GitHub} \ $|$ \
-    \href{mailto:yoann.corgnet@student-cs.fr}{\raisebox{-0.05\height}\faEnvelope \ yoann.corgnet@student-cs.fr} \ $|$ \
+    \href{mailto:yoann.corgnet.04@gmail.com}{\raisebox{-0.05\height}\faEnvelope \ yoann.corgnet.04@gmail.com} \ $|$ \
     \href{tel:+33768229430}{\raisebox{-0.05\height}\faMobile \ +33.7.68.22.94.30}
 \end{minipage}
 
@@ -188,22 +202,22 @@ Langues  &  \normalsize{Français (natif), Anglais (TOEIC 970: C1)}\\
 %----------------------------------------------------------------------------------------
 
 \section{Formation}
-\begin{joblong}{Double Diplôme CentraleSupélec - Mention Sciences du logiciel}{2026 - 2027}
+\begin{joblogo}{0.95cm}{logo-centralesupelec.png}{Double Diplôme CentraleSupélec - Mention Sciences du logiciel}{2026 - 2027}
     \item Génie logiciel : programmation avancée (C++), test, analyse statique, intégration continue, méthodes agiles
     \item Systèmes : systèmes d'exploitation, systèmes concurrents et répartis, algorithmes et modèles distribués
     \item Fondements : algorithmique avancée, logique et systèmes déductifs, sémantique et traitement des langages
-\end{joblong}
+\end{joblogo}
 
-\begin{joblong}{Diplôme d’Ingenieur ESIEA - Majeure Software Engineering}{Obtention prévue en 2027}
+\begin{joblogo}{0.55cm}{logo-esiea.pdf}{Diplôme d’Ingenieur ESIEA - Majeure Software Engineering}{Obtention prévue en 2027}
     \item Développement système (C), mobile (Flutter) et Full-Stack (Vue.js, Spring) : SOLID, conception applicative, architecture
     \item Administration Systèmes : Virtualisation, conteneurisation
     \item Data Science \& IA : SQL/NoSQL, analyse de données, Machine Learning, IA
-\end{joblong}
+\end{joblogo}
 
-\begin{joblong}{Double Diplôme UQAC - Bac+3 en informatique}{2024 - 2025}
+\begin{joblogo}{0.45cm}{logo-uqac.pdf}{Double Diplôme UQAC - Bac+3 en informatique}{2024 - 2025}
     \item Cybersécurité : détection de vulnérabilités (réseau/web), graphes d’attaque (Nmap, Nessus), forensic
     \item Big Data et IA : régression linéaire multivariée, arbres de décision, clustering, réseaux de neurones (MLP, CNN)
-\end{joblong}
+\end{joblogo}
 
 %----------------------------------------------------------------------------------------
 %	LOISIR / ASSOCIATIF
