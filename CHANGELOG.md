@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.9.0...v0.10.0) (2026-11-03)
+
+
+### Features
+
+* **cv:** add English translation of the CV ([aac8889](https://github.com/Yoann-CORGNET/portfolio/commit/aac88898a1cc9ae605c29c9884ca300c297bc622))
+* **cv:** version anglaise du CV et liens lisibles à l'impression ([25e4ea4](https://github.com/Yoann-CORGNET/portfolio/commit/25e4ea4eb0752523eb607fd5cadf1268cd1af0e7))
+
+
+### Bug Fixes
+
+* **cv:** end NerionSoft experience in Aug. 2026 and fix French typos ([36ef938](https://github.com/Yoann-CORGNET/portfolio/commit/36ef938d036fb0fa52f6a94ae3fc52be38290936))
+* **cv:** show readable LinkedIn and GitHub URLs for print ([ec0b8db](https://github.com/Yoann-CORGNET/portfolio/commit/ec0b8db9f4cd6a60ed75b264c465d1dd7520574a))
+
 ## [0.9.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.8.0...v0.9.0) (2026-10-02)
 
 
