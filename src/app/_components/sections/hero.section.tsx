@@ -79,7 +79,7 @@ export function HeroSection() {
             ))}
           </h1>
           <p className="mt-10 text-xl tracking-tight md:text-2xl">
-            Yoann Corgnet · Tech Lead @ NerionSoft
+            Yoann Corgnet · Software Engineering
           </p>
           <div className="mt-10 flex flex-wrap justify-end gap-4">
             <Action href="#demarche" size="lg">
