@@ -201,3 +201,32 @@ html {
   );
   pointer-events: none;
 }
+
+/* Teapot steam: three strokes rise and fade on loop, staggered per-curl via
+   animation-delay at the call site so the wisp reads as continuous rather
+   than three lines ticking in lockstep. */
+@keyframes steam {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-14px) scaleX(1.4);
+    opacity: 0;
+  }
+}
+
+.animate-steam {
+  animation: steam 2.4s ease-out infinite;
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-steam {
+    animation: none;
+    opacity: 0.4;
+  }
+}

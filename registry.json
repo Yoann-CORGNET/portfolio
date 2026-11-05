@@ -265,6 +265,61 @@
       ]
     },
     {
+      "name": "terminal",
+      "type": "registry:ui",
+      "title": "Terminal",
+      "description": "Terminal. Un émulateur au sens où xterm en est un : il possède la fenêtre, le journal et la frontière touche-vers-ligne, et ne connaît aucune commande. L'édition de ligne (historique aux flèches, complétion à Tab, Ctrl+C, Ctrl+L, Échap) est séparée dans useReadline, pour la raison qui fait de GNU readline une bibliothèque et non un morceau de bash. Le panneau est peint directement plutôt que via FlatBlock, dont le wrapper interne casserait la chaîne flex h-full dont dépend le défilement du journal. Tout ce qu'une ligne veut dire est décidé par le shell de l'appelant, derrière onRun.",
+      "registryDependencies": ["utils", "@yoann/design-tokens", "@yoann/primitives"],
+      "files": [
+        {
+          "path": "src/components/system/terminal.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/terminal.tsx"
+        },
+        {
+          "path": "src/components/system/terminal-readline.ts",
+          "type": "registry:ui",
+          "target": "@components/system/terminal-readline.ts"
+        }
+      ]
+    },
+    {
+      "name": "shell",
+      "type": "registry:lib",
+      "title": "Shell",
+      "description": "Un shell qui marche seul, pour que Terminal vaille la peine d'être monté avant que quiconque ait écrit une commande. useShell() rend onze commandes et un système de fichiers ; la config (user, hostname, disk, bin, motd) spécialise ce défaut au lieu de le remplacer, une commande de l'appelant masquant l'homonyme standard comme le ferait une entrée de $PATH plus précoce. La frontière builtin/binaire est une capacité, pas une imitation de bash : cd, help et history reçoivent le shell lui-même, les coreutils un contexte en lecture seule construit à part — la restriction tient à l'exécution, pas seulement à la compilation.",
+      "registryDependencies": ["@yoann/design-tokens", "@yoann/terminal"],
+      "files": [
+        {
+          "path": "src/lib/shell/shell.ts",
+          "type": "registry:lib",
+          "target": "@lib/shell/shell.ts"
+        },
+        {
+          "path": "src/lib/shell/types.ts",
+          "type": "registry:lib",
+          "target": "@lib/shell/types.ts"
+        },
+        { "path": "src/lib/shell/lex.ts", "type": "registry:lib", "target": "@lib/shell/lex.ts" },
+        { "path": "src/lib/shell/vfs.ts", "type": "registry:lib", "target": "@lib/shell/vfs.ts" },
+        {
+          "path": "src/lib/shell/dispatch.ts",
+          "type": "registry:lib",
+          "target": "@lib/shell/dispatch.ts"
+        },
+        {
+          "path": "src/lib/shell/builtins.tsx",
+          "type": "registry:lib",
+          "target": "@lib/shell/builtins.tsx"
+        },
+        {
+          "path": "src/lib/shell/coreutils.ts",
+          "type": "registry:lib",
+          "target": "@lib/shell/coreutils.ts"
+        }
+      ]
+    },
+    {
       "name": "system",
       "type": "registry:base",
       "title": "Système complet",
@@ -282,7 +337,9 @@
         "@yoann/layout",
         "@yoann/overlap",
         "@yoann/pipeline-flow",
-        "@yoann/flow-field"
+        "@yoann/flow-field",
+        "@yoann/terminal",
+        "@yoann/shell"
       ],
       "files": [
         {
