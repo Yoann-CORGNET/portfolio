@@ -1,5 +1,11 @@
 import type * as Three from "three";
-import { MASCOT_FACES, SCREEN, SHAPE_TONES, type MascotFaceId } from "@/lib/design/mascot-shapes";
+import {
+  HEAD as HEAD_MM,
+  MASCOT_FACES,
+  SCREEN,
+  SHAPE_TONES,
+  type MascotFaceId,
+} from "@/lib/design/mascot-shapes";
 import { FLAT_RGB, type FlatToken } from "@/lib/design/tokens";
 
 /**
@@ -15,7 +21,9 @@ type ThreeModule = typeof Three;
 
 /** Les cotes retenues : une tête une fois et demie plus large que le corps. */
 const BODY = { w: 0.22, h: 0.16, d: 0.16 } as const;
-const HEAD = { w: 0.3, h: 0.24, d: 0.24 } as const;
+/** Les cotes de la tête, partagées avec le symbole à plat, passées en mètres. */
+const mm = (v: number) => v / 1000;
+const HEAD = { w: mm(HEAD_MM.w), h: mm(HEAD_MM.h), d: mm(HEAD_MM.d) } as const;
 const LEG_H = 0.045;
 const ARM_L = 0.11;
 const FOOT_H = 0.03;
@@ -23,8 +31,6 @@ const FOOT_H = 0.03;
 const NECK_GAP = 0.014;
 /** Ce que le cou cache dans la tête, pour rester accroché quand elle penche. */
 const NECK_SUNK = 0.024;
-/** Côté du cube qui porte l'antenne. */
-const ANTENNA_BASE = 0.03;
 
 export type MascotPose = {
   label: string;
@@ -239,33 +245,45 @@ export function buildMascot(THREE: ThreeModule, { headOnly = false } = {}): Masc
   box("neck_block", "charcoal", [0.08, neckH, 0.08], [0, neckH / 2, 0], neck);
   const head = group("head", neck, 0, NECK_GAP, 0);
   box("head_shell", "cream", [HEAD.w, HEAD.h, HEAD.d], [0, HEAD.h / 2, 0], head);
-  box("head_rule", "sand", [HEAD.w + 0.002, 0.01, HEAD.d + 0.002], [0, 0.005, 0], head);
+  box(
+    "head_rule",
+    "sand",
+    [HEAD.w + 0.002, mm(HEAD_MM.rule), HEAD.d + 0.002],
+    [0, mm(HEAD_MM.rule) / 2, 0],
+    head,
+  );
 
-  const screenW = HEAD.w * 0.8;
-  const screenH = HEAD.h * 0.65;
-  const screenY = HEAD.h * 0.54;
-  const screen = box("screen", "ink", [screenW, screenH, 0.008], [0, screenY, HEAD.d / 2], head);
+  const screenW = mm(HEAD_MM.screen.w);
+  const screenH = mm(HEAD_MM.screen.h);
+  const screenY = mm(HEAD_MM.screen.y);
+  const screenD = mm(HEAD_MM.screen.depth);
+  const screen = box("screen", "ink", [screenW, screenH, screenD], [0, screenY, HEAD.d / 2], head);
 
   /* Oreilles : des poignées de rack */
+  const ear = {
+    reach: mm(HEAD_MM.ear.reach),
+    bar: mm(HEAD_MM.ear.bar),
+    thick: mm(HEAD_MM.ear.thickness),
+    spread: mm(HEAD_MM.ear.spread),
+  };
   for (const s of [-1, 1]) {
     const side = s < 0 ? "L" : "R";
     const ex = (s * HEAD.w) / 2;
     const mid = HEAD.h / 2;
-    const spread = HEAD.h * 0.19;
     for (const v of [1, -1]) {
       box(
         `ear_${side}_${v > 0 ? "top" : "bottom"}`,
         "charcoal",
-        [0.03, 0.014, 0.014],
-        [ex + s * 0.015, mid + v * spread, 0],
+        [ear.reach, ear.thick, ear.thick],
+        [ex + (s * ear.reach) / 2, mid + v * ear.spread, 0],
         head,
       );
     }
     box(
       `ear_${side}_bar`,
       "charcoal",
-      [0.014, spread * 2 + 0.014, 0.014],
-      [ex + s * 0.037, mid, 0],
+      [ear.bar, ear.spread * 2 + ear.thick, ear.thick],
+      [ex + s * (ear.reach + ear.bar / 2), mid, 0],
       head,
     );
   }
@@ -274,11 +292,20 @@ export function buildMascot(THREE: ThreeModule, { headOnly = false } = {}): Masc
      la tête : tant que l'antenne penche de moins de 45° (les poses vont
      jusqu'à 0,7 rad), aucun coin du dessous ne remonte au-dessus de la
      surface, et la base ne décolle jamais. */
-  const antenna = group("antenna", head, HEAD.w * 0.23, HEAD.h, -HEAD.d * 0.12);
-  const base = ANTENNA_BASE;
+  const a = HEAD_MM.antenna;
+  const antenna = group("antenna", head, mm(a.x), HEAD.h, mm(a.z));
+  const base = mm(a.base);
+  const mastH = mm(a.mastH);
+  const tip = mm(a.tip);
   box("antenna_base", "charcoal", [base, base, base], [0, 0, 0], antenna);
-  box("antenna_mast", "charcoal", [0.01, 0.07, 0.01], [0, base / 2 + 0.035, 0], antenna);
-  box("antenna_tip", "petrol", [0.026, 0.026, 0.026], [0, base / 2 + 0.07 + 0.013, 0], antenna);
+  box(
+    "antenna_mast",
+    "charcoal",
+    [mm(a.mast), mastH, mm(a.mast)],
+    [0, base / 2 + mastH / 2, 0],
+    antenna,
+  );
+  box("antenna_tip", "petrol", [tip, tip, tip], [0, base / 2 + mastH + tip / 2, 0], antenna);
 
   /* Visage : le tracé 2D, extrudé */
   const faceAnchor = group("face", head, 0, screenY, HEAD.d / 2 + 0.007);

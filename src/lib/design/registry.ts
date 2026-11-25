@@ -474,7 +474,21 @@ export const REGISTRY: ComponentSpec[] = [
     variants: ["2 segments", "3 segments"],
     props: [
       { name: "options", type: "string[]", note: "Libellés." },
-      { name: "panels", type: "ReactNode[]", note: "Un panneau par option, dans le même ordre." },
+      {
+        name: "panels",
+        type: "ReactNode[]",
+        note: "Un panneau par option, dans le même ordre. Facultatif quand la bascule est pilotée.",
+      },
+      {
+        name: "active",
+        type: "number",
+        note: "Index actif, quand la bascule est pilotée de l'extérieur. Omis, elle garde son propre état.",
+      },
+      {
+        name: "onSelect",
+        type: "(index: number) => void",
+        note: "Appelé à chaque choix, pour qu'un choix serve de valeur ailleurs dans la page.",
+      },
     ],
   },
   {

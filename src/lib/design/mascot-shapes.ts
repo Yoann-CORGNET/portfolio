@@ -90,11 +90,18 @@ function heart(x: number, y: number, k = 1.5): Shape {
   return { kind: "poly", points: outline.map(([px, py]) => [x + px * k, y + py * k]), tone: "eye" };
 }
 
-/** Huit segments en couronne ; le premier, vermillon, est celui qui tourne. */
+/**
+ * Le tour du chargement : autant de crans que de segments, un tour complet
+ * par `ms`. Lu par la version à plat (animation CSS) et par la version en
+ * volume (minuterie), pour qu'elles tournent au même rythme.
+ */
+export const MASCOT_SPIN = { steps: 8, ms: 880 } as const;
+
+/** Les segments en couronne ; le premier, vermillon, est celui qui tourne. */
 function spinner(radius: number, w: number, h: number): Shape[] {
   const tones: ShapeTone[] = ["mouth", "eye", "soft", "dim", "dim", "dim", "dim", "dim"];
-  return tones.map((tone, i) => {
-    const t = (i * Math.PI) / 4;
+  return tones.slice(0, MASCOT_SPIN.steps).map((tone, i) => {
+    const t = (i * 2 * Math.PI) / MASCOT_SPIN.steps;
     return bar(Math.cos(t) * radius, Math.sin(t) * radius, w, h, tone, t);
   });
 }
@@ -383,16 +390,30 @@ export const MASCOT_EMOJI_IDS = Object.keys(MASCOT_EMOJIS) as MascotEmojiId[];
 /* ------------------------------------------------------------------ */
 
 /**
- * La tête de face, à plat, en unités de tracé : base de la tête à y = 0.
- * Les cotes sont celles du modèle 3D multipliées par mille.
+ * La tête, en millimètres : une seule cote pour le symbole à plat (une unité
+ * de tracé vaut un millimètre) et pour le modèle 3D (qui la divise par mille).
+ * Base de la tête à y = 0, axe y vers le haut, x au centre, z vers l'avant.
  */
 export const HEAD = {
   w: 300,
   h: 240,
-  /** Hauteur du centre de l'écran. */
-  screenY: 129.6,
-  /** Écart vertical des deux attaches d'oreille, depuis le milieu de la tête. */
-  earSpread: 45.6,
+  d: 240,
+  /** Le filet sable qui borde le bas de la tête. */
+  rule: 10,
+  /** L'écran : sa taille, la hauteur de son centre, son épaisseur en volume. */
+  screen: { w: 240, h: 156, y: 129.6, depth: 8 },
+  /**
+   * Les oreilles, des poignées de rack : deux bras qui sortent de `reach` du
+   * flanc, écartés de `spread` de part et d'autre du milieu, et une barre qui
+   * les relie.
+   */
+  ear: { reach: 30, bar: 14, thickness: 14, spread: 45.6 },
+  /**
+   * L'antenne, plantée sur le dessus en (x, z). Sa base est un cube à moitié
+   * enfoncé dans la tête : seule sa moitié haute dépasse, et en volume elle ne
+   * décolle pas quand l'antenne penche de moins de 45°.
+   */
+  antenna: { x: 69, z: -28.8, base: 30, mast: 10, mastH: 70, tip: 26 },
 } as const;
 
 /**

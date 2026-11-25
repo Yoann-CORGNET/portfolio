@@ -62,12 +62,31 @@ export function HoverIndex({
   );
 }
 
-/** Segmented switcher — flat blocks, one active, no shadow. */
+/**
+ * Segmented switcher — flat blocks, one active, no shadow.
+ *
+ * Uncontrolled by default, switching its own `panels`. Pass `active` and
+ * `onSelect` to drive it from outside instead, when the choice is a value
+ * for something else on the page rather than a panel to show; `panels` is
+ * then optional.
+ */
 export function Segmented({
   options,
   panels,
-}: Readonly<{ options: string[]; panels: React.ReactNode[] }>) {
-  const [active, setActive] = useState(0);
+  active,
+  onSelect,
+}: Readonly<{
+  options: string[];
+  panels?: React.ReactNode[];
+  active?: number;
+  onSelect?: (index: number) => void;
+}>) {
+  const [own, setOwn] = useState(0);
+  const current = active ?? own;
+  const select = (i: number) => {
+    setOwn(i);
+    onSelect?.(i);
+  };
 
   return (
     <div>
@@ -76,10 +95,11 @@ export function Segmented({
           <button
             key={option}
             type="button"
-            onClick={() => setActive(i)}
+            aria-pressed={current === i}
+            onClick={() => select(i)}
             className="cursor-pointer px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
             style={
-              active === i
+              current === i
                 ? { background: FLAT.ink, color: FLAT.cream }
                 : { background: FLAT.cream, color: FLAT.ink }
             }
@@ -88,17 +108,19 @@ export function Segmented({
           </button>
         ))}
       </div>
-      <div className="relative mt-px">
-        {panels.map((panel, i) => (
-          <div
-            key={options[i]}
-            hidden={active !== i}
-            className="animate-in fade-in slide-in-from-bottom-2 duration-500"
-          >
-            {panel}
-          </div>
-        ))}
-      </div>
+      {panels && (
+        <div className="relative mt-px">
+          {panels.map((panel, i) => (
+            <div
+              key={options[i]}
+              hidden={current !== i}
+              className="animate-in fade-in slide-in-from-bottom-2 duration-500"
+            >
+              {panel}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

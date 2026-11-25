@@ -1,17 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Action, Label } from "@/components/system";
+import { Action, Label, Segmented } from "@/components/system";
 import { MASCOT_FACES, MASCOT_FACE_IDS, type MascotFaceId } from "@/lib/design/mascot-shapes";
-import { FLAT } from "@/lib/design/tokens";
 import { MASCOT_POSES, MASCOT_POSE_IDS, type MascotPoseId } from "./mascot-model";
 import { MascotStage, type MascotStageHandle } from "./mascot-stage";
 
-/**
- * Une rangée de choix exclusifs, au dessin du `Segmented` du système. Le
- * `Segmented` bascule des panneaux ; ici, il faut une valeur à transmettre à
- * la scène, d'où ce pendant contrôlé, propre à la page.
- */
+/** Une bascule du système, avec son nom, pilotée par une valeur. */
 function Choice<T extends string>({
   name,
   options,
@@ -30,23 +25,12 @@ function Choice<T extends string>({
       <legend>
         <Label>{name}</Label>
       </legend>
-      <div className="mt-2 flex flex-wrap gap-px bg-border">
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            aria-pressed={value === option}
-            onClick={() => onChange(option)}
-            className="cursor-pointer px-4 py-2.5 text-[10px] uppercase tracking-[0.2em] transition-colors duration-300"
-            style={
-              value === option
-                ? { background: FLAT.ink, color: FLAT.cream }
-                : { background: FLAT.cream, color: FLAT.ink }
-            }
-          >
-            {labelOf(option)}
-          </button>
-        ))}
+      <div className="mt-2">
+        <Segmented
+          options={options.map(labelOf)}
+          active={options.indexOf(value)}
+          onSelect={(i) => onChange(options[i])}
+        />
       </div>
     </fieldset>
   );
@@ -75,8 +59,12 @@ export function MascotViewer() {
       const link = document.createElement("a");
       link.href = url;
       link.download = `prompt-${pose}-${face}.glb`;
+      document.body.append(link);
       link.click();
-      URL.revokeObjectURL(url);
+      link.remove();
+      // Révoquer l'adresse dans la foulée du clic peut couper le
+      // téléchargement avant qu'il ait lu le fichier, selon le navigateur.
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } finally {
       setSaving(false);
     }

@@ -3,6 +3,7 @@ import {
   MASCOT_EMOJIS,
   MASCOT_FACES,
   MASCOT_HEAD_SCHEMES,
+  MASCOT_SPIN,
   SCREEN,
   SHAPE_TONES,
   type MascotEmojiId,
@@ -74,7 +75,23 @@ function Shapes({
  * boîte englobante tourne autour du centre de l'écran, où qu'il soit.
  */
 const SPIN =
-  "origin-center [transform-box:fill-box] animate-[mascot-load_0.88s_steps(8)_infinite] motion-reduce:animate-none";
+  "origin-center [transform-box:fill-box] animate-[mascot-load_var(--mascot-spin)_infinite] motion-reduce:animate-none";
+
+/** Durée et crans, tirés de `MASCOT_SPIN` et passés à l'animation. */
+const SPIN_STYLE = {
+  "--mascot-spin": `${MASCOT_SPIN.ms}ms steps(${MASCOT_SPIN.steps})`,
+} as React.CSSProperties;
+
+/** Le groupe qui porte les traits : il tourne si le visage est un chargement. */
+function Spinning({ spin, children }: Readonly<{ spin: boolean; children: React.ReactNode }>) {
+  return spin ? (
+    <g className={SPIN} style={SPIN_STYLE}>
+      {children}
+    </g>
+  ) : (
+    <g>{children}</g>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Visage-écran                                                       */
@@ -102,9 +119,9 @@ export function MascotScreen({
     >
       <rect x={-w / 2} y={-h / 2} width={w} height={h} fill={flat(spec.screen)} />
       <g transform="scale(1,-1)">
-        <g className={"spin" in spec ? SPIN : undefined}>
+        <Spinning spin={"spin" in spec}>
           <Shapes shapes={spec.shapes} />
-        </g>
+        </Spinning>
       </g>
     </svg>
   );
@@ -141,9 +158,9 @@ export function MascotEmoji({
         fill={flat("dim" in spec ? "charcoal" : "ink")}
       />
       <g transform="scale(1,-1)">
-        <g className={"spin" in spec ? SPIN : undefined}>
+        <Spinning spin={"spin" in spec}>
           <Shapes shapes={spec.shapes} />
-        </g>
+        </Spinning>
       </g>
     </svg>
   );
@@ -153,21 +170,26 @@ export function MascotEmoji({
 /* Symbole                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Marge autour du dessin, pour que le contour ne touche pas le bord du SVG. */
 const PAD = 14;
-const EAR = { inner: 150, outer: 180, bar: 194, half: 7 } as const;
-/* Mêmes cotes que le modèle 3D : un cube de 30 à moitié enfoncé dans la tête,
-   dont seule la moitié haute dépasse. */
-const ANTENNA = {
-  base: [54, 240, 84, 255],
-  mast: [64, 255, 74, 325],
-  tip: [56, 325, 82, 351],
-} as const;
 
-function Box({
-  box: [x0, y0, x1, y1],
-  fill,
-}: Readonly<{ box: readonly [number, number, number, number]; fill: string }>) {
-  return <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={fill} />;
+type Rect = { x: number; y: number; w: number; h: number };
+
+function Box({ x, y, w, h, fill }: Readonly<Rect & { fill: string }>) {
+  return <rect x={x} y={y} width={w} height={h} fill={fill} />;
+}
+
+/** L'antenne de face : la moitié haute du cube, le mât, la tête. */
+function antennaBoxes(): { base: Rect; mast: Rect; tip: Rect; top: number } {
+  const { x, base, mast, mastH, tip } = HEAD.antenna;
+  const baseTop = HEAD.h + base / 2;
+  const mastTop = baseTop + mastH;
+  return {
+    base: { x: x - base / 2, y: HEAD.h, w: base, h: base / 2 },
+    mast: { x: x - mast / 2, y: baseTop, w: mast, h: mastH },
+    tip: { x: x - tip / 2, y: mastTop, w: tip, h: tip },
+    top: mastTop + tip,
+  };
 }
 
 /**
@@ -191,12 +213,16 @@ export function MascotHead({
 }>) {
   const s = MASCOT_HEAD_SCHEMES[scheme];
   const spec = MASCOT_FACES[face];
-  const { w, h, screenY, earSpread } = HEAD;
+  const { w, h, rule, screen, ear } = HEAD;
   const mid = h / 2;
-  const top = antenna ? ANTENNA.tip[3] : h;
-  const outer = EAR.bar + PAD;
+  const ant = antennaBoxes();
+  const top = antenna ? ant.top : h;
+  const outer = w / 2 + ear.reach + ear.bar + PAD;
   const metal = flat(s.metal);
-  const screenFill = s.screen ? flat(s.screen) : "none";
+  // Un écran encre suit l'état du visage : la veille l'assombrit, comme en volume.
+  let screenFill = "none";
+  if (s.screen === "ink") screenFill = flat(spec.screen);
+  else if (s.screen) screenFill = flat(s.screen);
 
   return (
     <svg
@@ -208,9 +234,9 @@ export function MascotHead({
       <g transform="scale(1,-1)">
         {antenna && (
           <>
-            <Box box={ANTENNA.base} fill={metal} />
-            <Box box={ANTENNA.mast} fill={metal} />
-            <Box box={ANTENNA.tip} fill={flat(s.tip)} />
+            <Box {...ant.base} fill={metal} />
+            <Box {...ant.mast} fill={metal} />
+            <Box {...ant.tip} fill={flat(s.tip)} />
           </>
         )}
         {[-1, 1].map((k) => (
@@ -218,17 +244,17 @@ export function MascotHead({
             {[-1, 1].map((v) => (
               <rect
                 key={v}
-                x={k < 0 ? -EAR.outer : EAR.inner}
-                y={mid + v * earSpread - EAR.half}
-                width={EAR.outer - EAR.inner}
-                height={EAR.half * 2}
+                x={k < 0 ? -w / 2 - ear.reach : w / 2}
+                y={mid + v * ear.spread - ear.thickness / 2}
+                width={ear.reach}
+                height={ear.thickness}
               />
             ))}
             <rect
-              x={k < 0 ? -EAR.bar : EAR.outer}
-              y={mid - earSpread - EAR.half}
-              width={EAR.bar - EAR.outer}
-              height={earSpread * 2 + EAR.half * 2}
+              x={k < 0 ? -w / 2 - ear.reach - ear.bar : w / 2 + ear.reach}
+              y={mid - ear.spread - ear.thickness / 2}
+              width={ear.bar}
+              height={ear.spread * 2 + ear.thickness}
             />
           </g>
         ))}
@@ -246,22 +272,22 @@ export function MascotHead({
             x={-w / 2 + s.stroke / 2}
             y={s.stroke / 2}
             width={w - s.stroke}
-            height={10 - s.stroke / 2}
+            height={rule - s.stroke / 2}
             fill={flat(s.rule)}
           />
         )}
         <rect
-          x={-SCREEN.w / 2}
-          y={screenY - 78}
-          width={SCREEN.w}
-          height={156}
+          x={-screen.w / 2}
+          y={screen.y - screen.h / 2}
+          width={screen.w}
+          height={screen.h}
           fill={screenFill}
           stroke={s.screen || !s.outline ? undefined : flat(s.outline)}
           strokeWidth={s.screen || !s.outline ? undefined : s.stroke}
         />
-        <g className={"spin" in spec ? SPIN : undefined}>
-          <Shapes shapes={spec.shapes} force={s.face} dy={screenY} />
-        </g>
+        <Spinning spin={"spin" in spec}>
+          <Shapes shapes={spec.shapes} force={s.face} dy={screen.y} />
+        </Spinning>
       </g>
     </svg>
   );

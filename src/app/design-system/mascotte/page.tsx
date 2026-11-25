@@ -196,6 +196,7 @@ export default function MascottePage() {
               <div className="flex min-h-72 flex-1 items-center justify-center">
                 {index === "L1" && (
                   <MascotStage
+                    deferred
                     pose="victoire"
                     label="Prompt en entier, bras levés"
                     className="h-72 w-full"
@@ -203,6 +204,7 @@ export default function MascottePage() {
                 )}
                 {index === "L2" && (
                   <MascotStage
+                    deferred
                     framing="head"
                     label="La tête de Prompt, en volume"
                     className="h-72 w-full"
