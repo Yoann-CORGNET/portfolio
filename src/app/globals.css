@@ -167,8 +167,9 @@ html {
   animation: blink 1s infinite;
 }
 
-/* The blink is the one loop the system runs outside the ticker, and it is a
-   loop by nature: it says "still working". Reduced motion keeps the cursor,
+/* The blink is one of the two loops the system runs outside the ticker (the
+   other is the mascot's loading face), and both are loops by nature: they say
+   "still working". Reduced motion keeps the cursor,
    drops the flashing. */
 @media (prefers-reduced-motion: reduce) {
   .animate-blink {
@@ -184,6 +185,17 @@ html {
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+/* Mascot loading face. Eight 45° notches, clockwise once the face's y axis is
+   flipped back; `steps(8)` makes it tick rather than glide. */
+@keyframes mascot-load {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
   }
 }
 

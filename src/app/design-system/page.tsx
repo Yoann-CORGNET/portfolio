@@ -10,6 +10,9 @@ import {
   Label,
   Logo,
   Marquee,
+  MascotEmoji,
+  MascotHead,
+  MascotScreen,
   Meter,
   OverlapCascade,
   OverlapTriangle,
@@ -49,6 +52,14 @@ import {
 } from "@/lib/design/registry";
 import { FLAT, FLAT_TOKENS, TYPE, WARM_TOKENS, dotScreen } from "@/lib/design/tokens";
 import { LOGO_SCHEMES, LOGO_SCHEME_IDS, type LogoScheme } from "@/lib/design/brand";
+import {
+  MASCOT_EMOJIS,
+  MASCOT_EMOJI_IDS,
+  MASCOT_FACES,
+  MASCOT_FACE_IDS,
+  MASCOT_HEAD_SCHEMES,
+  MASCOT_HEAD_SCHEME_IDS,
+} from "@/lib/design/mascot-shapes";
 import { cn } from "@/lib/utils";
 import { PALETTES, buildRamp } from "@/lib/design/palette";
 
@@ -157,6 +168,48 @@ const PREVIEWS: Record<string, React.ReactNode> = {
         <FlatBlock tone="vermillon" className="p-8">
           <Label tone="inherit">hérite de la couleur du bloc</Label>
         </FlatBlock>
+      </Variant>
+    </Variants>
+  ),
+
+  "mascot-head": (
+    <Variants>
+      {MASCOT_HEAD_SCHEME_IDS.map((scheme) => (
+        <Variant key={scheme} name={MASCOT_HEAD_SCHEMES[scheme].label} padded={false}>
+          <FlatBlock tone={MASCOT_HEAD_SCHEMES[scheme].ground} className="flex justify-center p-8">
+            <MascotHead scheme={scheme} className="w-32" />
+          </FlatBlock>
+        </Variant>
+      ))}
+    </Variants>
+  ),
+
+  "mascot-screen": (
+    <Variants columns={3}>
+      {MASCOT_FACE_IDS.map((face) => (
+        <Variant key={face} name={MASCOT_FACES[face].label}>
+          <MascotScreen face={face} />
+        </Variant>
+      ))}
+    </Variants>
+  ),
+
+  "mascot-emoji": (
+    <Variants columns={1}>
+      <Variant name="seize visages · 32 px">
+        <div className="flex flex-wrap gap-3">
+          {MASCOT_EMOJI_IDS.map((emoji) => (
+            <MascotEmoji key={emoji} emoji={emoji} label={MASCOT_EMOJIS[emoji].label} />
+          ))}
+        </div>
+      </Variant>
+      <Variant name="la mascotte en entier">
+        <a
+          href="/design-system/mascotte"
+          className="transition-opacity duration-300 hover:opacity-70"
+        >
+          <Label tone="strong">règles, volume et niveaux de détail →</Label>
+        </a>
       </Variant>
     </Variants>
   ),
@@ -604,6 +657,12 @@ export default function DesignSystemPage() {
           >
             <Label>layouts →</Label>
           </a>
+          <a
+            href="/design-system/mascotte"
+            className="transition-opacity duration-300 hover:opacity-70"
+          >
+            <Label>mascotte →</Label>
+          </a>
           <div className="ml-auto flex items-center gap-4">
             <Label className="hidden sm:block">surface</Label>
             <SurfaceSwitch />
@@ -884,6 +943,12 @@ export default function DesignSystemPage() {
             className="transition-opacity duration-300 hover:opacity-70"
           >
             <Label tone="accent">13 compositions →</Label>
+          </a>
+          <a
+            href="/design-system/mascotte"
+            className="transition-opacity duration-300 hover:opacity-70"
+          >
+            <Label tone="accent">la mascotte →</Label>
           </a>
           <Label numeric className="ml-auto">
             {INVENTORY.components} composants · {INVENTORY.variants} variantes
