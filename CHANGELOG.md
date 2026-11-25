@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.13.1...v0.14.0) (2026-11-25)
+
+
+### Features
+
+* **cv:** target FDE roles and AI integration, retitle NerionSoft role to Tech Lead ([103239f](https://github.com/Yoann-CORGNET/portfolio/commit/103239f78312951c16872301c8c92edbcd361750))
+* **cv:** target FDE roles and AI integration, retitle NerionSoft role to Tech Lead ([cae674c](https://github.com/Yoann-CORGNET/portfolio/commit/cae674c580ffc04d021b2389c18f5ea127598b5d))
+
 ## [0.13.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.13.0...v0.13.1) (2026-11-25)
 
 
