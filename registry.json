@@ -147,6 +147,44 @@
       ]
     },
     {
+      "name": "mascot-shapes",
+      "type": "registry:lib",
+      "title": "Mascotte · tracés",
+      "description": "Les visages, les emojis et les traitements du symbole de Prompt, écrits en termes de tokens. Séparé du composant pour que le modèle 3D lise les mêmes tracés que l'illustration.",
+      "registryDependencies": ["@yoann/design-tokens"],
+      "files": [
+        {
+          "path": "src/lib/design/mascot-shapes.ts",
+          "type": "registry:lib",
+          "target": "@lib/design/mascot-shapes.ts"
+        }
+      ]
+    },
+    {
+      "name": "mascot",
+      "type": "registry:ui",
+      "title": "Mascotte",
+      "description": "MascotHead, MascotScreen, MascotEmoji : Prompt à plat, en symbole, en écran et en emoji. Rien du dessin ne vit dans le composant ; le chargement tourne par crans et s'arrête quand le système demande moins de mouvement.",
+      "registryDependencies": ["utils", "@yoann/design-tokens", "@yoann/mascot-shapes"],
+      "css": {
+        "@keyframes mascot-load": {
+          "from": {
+            "transform": "rotate(0deg)"
+          },
+          "to": {
+            "transform": "rotate(-360deg)"
+          }
+        }
+      },
+      "files": [
+        {
+          "path": "src/components/system/mascot.tsx",
+          "type": "registry:ui",
+          "target": "@components/system/mascot.tsx"
+        }
+      ]
+    },
+    {
       "name": "stats",
       "type": "registry:ui",
       "title": "Chiffres",
@@ -276,6 +314,8 @@
         "@yoann/primitives",
         "@yoann/brand",
         "@yoann/logo",
+        "@yoann/mascot-shapes",
+        "@yoann/mascot",
         "@yoann/stats",
         "@yoann/motion",
         "@yoann/controls",

@@ -43,6 +43,8 @@ Next.js App Router:
 - `/design-system` — The house design system: foundations, then every component with its variants
   and props. Generated from `src/lib/design/registry.ts`.
 - `/design-system/layouts` — Thirteen compositions built with that library.
+- `/design-system/mascotte` — Prompt, the mascot: rules, expressions, levels of detail. The 3D model
+  (`three`, loaded on this route only) lives in the route's own `_components/`.
 
 Navigation on the homepage uses anchor-based scrolling (`#demarche`, `#travail`, `#contact`).
 
@@ -63,9 +65,9 @@ Three distinct layers — do not mix them up (the rule and its rationale are in
 
 - `src/components/system/` — **the house design system**, and what new work should be built from.
   Grouped by concern: `primitives.tsx`, `stats.tsx`, `motion.tsx`, `controls.tsx`, `overlap.tsx`,
-  `pipeline-flow.tsx`, `flow-field.tsx`, `layout.tsx`, `logo.tsx`. `docs.tsx`, `specimens.tsx`,
-  `swatch.tsx` and `overlap-bench.tsx` are the chrome of `/design-system` only and are deliberately
-  outside the barrel.
+  `pipeline-flow.tsx`, `flow-field.tsx`, `layout.tsx`, `logo.tsx`, `mascot.tsx`. `docs.tsx`,
+  `specimens.tsx`, `swatch.tsx` and `overlap-bench.tsx` are the chrome of `/design-system` only and
+  are deliberately outside the barrel.
 - `src/components/shared/` — cross-route chrome (`navbar.tsx`, `footer.tsx`).
 - `src/components/sections/` — section shells shared by more than one project page
   (`project-hero.tsx`, `split-header.tsx`). A section used by exactly one page does **not** go here.
@@ -83,9 +85,11 @@ re-adopting that layer deliberately, not restoring something that was load-beari
 
 Design tokens and the generative texture live in `src/lib/design/`: `tokens.ts` (flat colours in
 OKLCh, type scale, motion durations, dot screen), `palette.ts` (texture ramps + OKLCh→sRGB),
-`brand.ts` (logo paths and colour schemes), `streamlines.ts`, `noise.ts`, and `registry.ts` (the
-library described as data — the `/design-system` page and its inventory figures are both generated
-from it, so a component added to the library but not to `registry.ts` simply is not in the system).
+`brand.ts` (logo paths and colour schemes), `mascot-shapes.ts` (the mascot's faces, emojis and
+symbol schemes, read by both the SVG components and the 3D model), `streamlines.ts`, `noise.ts`, and
+`registry.ts` (the library described as data — the `/design-system` page and its inventory figures
+are both generated from it, so a component added to the library but not to `registry.ts` simply is
+not in the system).
 
 ### Design system registry (distribution)
 

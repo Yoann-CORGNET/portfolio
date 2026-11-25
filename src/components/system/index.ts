@@ -12,6 +12,8 @@ export type { LabelTone, ActionVariant, ActionSize, ActionState } from "./primit
 
 export { Logo } from "./logo";
 
+export { MascotEmoji, MascotHead, MascotScreen } from "./mascot";
+
 export { Frame, Etude } from "./layout";
 
 export { Stat, StatGrid, StatCell, Meter } from "./stats";

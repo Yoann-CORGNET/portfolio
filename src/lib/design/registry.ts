@@ -17,6 +17,7 @@
  */
 
 import { LOGO_SCHEME_IDS } from "./brand";
+import { MASCOT_FACE_IDS, MASCOT_HEAD_SCHEME_IDS } from "./mascot-shapes";
 
 export type Group = "primitive" | "data" | "control" | "motion" | "texture" | "figure" | "layout";
 
@@ -234,6 +235,82 @@ export const REGISTRY: ComponentSpec[] = [
         name: "label",
         type: "string",
         note: "À poser quand la marque est seule. Omis, le SVG est masqué aux lecteurs d'écran.",
+      },
+    ],
+  },
+  {
+    id: "mascot-head",
+    name: "MascotHead",
+    group: "primitive",
+    file: "mascot.tsx",
+    client: false,
+    purpose:
+      "Le symbole de la mascotte : sa tête de face, à plat. Elle ne descend pas sous 64 px ; en dessous, c'est l'emoji qui prend le relais.",
+    variants: MASCOT_HEAD_SCHEME_IDS,
+    props: [
+      {
+        name: "face",
+        type: "MascotFaceId",
+        fallback: '"heureux"',
+        note: "L'expression affichée dans l'écran.",
+      },
+      {
+        name: "scheme",
+        type: MASCOT_HEAD_SCHEME_IDS.map((id) => `"${id}"`).join(" | "),
+        fallback: '"couleur"',
+        note: "Chaque traitement est écrit pour un fond : « sur-encre » veut un aplat sombre.",
+      },
+      {
+        name: "antenna",
+        type: "boolean",
+        fallback: "true",
+        note: "Retire l'antenne quand la hauteur manque.",
+      },
+      {
+        name: "label",
+        type: "string",
+        note: "À poser quand la tête est seule. Omis, le SVG est masqué aux lecteurs d'écran.",
+      },
+    ],
+  },
+  {
+    id: "mascot-screen",
+    name: "MascotScreen",
+    group: "primitive",
+    file: "mascot.tsx",
+    client: false,
+    purpose:
+      "L'écran de la mascotte, sans la tête : l'expression seule, au format de l'écran. Le chargement tourne par crans et s'arrête quand le système demande moins de mouvement.",
+    variants: MASCOT_FACE_IDS,
+    props: [
+      {
+        name: "face",
+        type: "MascotFaceId",
+        fallback: '"heureux"',
+        note: "Une des douze expressions.",
+      },
+      {
+        name: "label",
+        type: "string",
+        note: "À poser quand l'écran est seul. Omis, le SVG est masqué aux lecteurs d'écran.",
+      },
+    ],
+  },
+  {
+    id: "mascot-emoji",
+    name: "MascotEmoji",
+    group: "primitive",
+    file: "mascot.tsx",
+    client: false,
+    purpose:
+      "Le visage en un caractère, dans une tuile encre. Redessiné et non réduit, pour rester lisible jusqu'à 20 px dans une ligne de texte.",
+    variants: ["16 visages", "dans une ligne de texte"],
+    props: [
+      { name: "emoji", type: "MascotEmojiId", note: "Un des seize visages." },
+      {
+        name: "label",
+        type: "string",
+        note: "À poser quand l'emoji remplace un mot. Omis, le SVG est masqué aux lecteurs d'écran.",
       },
     ],
   },
