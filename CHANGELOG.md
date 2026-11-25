@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.12.0...v0.13.0) (2026-11-25)
+
+
+### Features
+
+* **mascotte:** place Prompt across the site and walk him into project heroes ([72a98b7](https://github.com/Yoann-CORGNET/portfolio/commit/72a98b75eed52237ae2d3c3e552e8d719853ad68))
+
 ## [0.12.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.11.0...v0.12.0) (2026-11-25)
 
 
