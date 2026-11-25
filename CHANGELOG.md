@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.11.0...v0.12.0) (2026-11-25)
+
+
+### Features
+
+* add /teapot easter egg with a real 418 shell ([0638989](https://github.com/Yoann-CORGNET/portfolio/commit/06389893cd4cb651ecec3c9780cca279c1775d41))
+
 ## [0.11.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.10.0...v0.11.0) (2026-11-25)
 
 
