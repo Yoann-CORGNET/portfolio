@@ -24,11 +24,12 @@ export default function Page() {
     <main className="min-h-screen bg-background">
       <ProjectHero
         tone="cream"
-        blockClassName="px-6 pt-20 pb-16 md:pt-28 md:pb-20"
+        blockClassName="flex min-h-[60vh] flex-col justify-center px-6 py-24 md:min-h-[72vh] md:py-32"
         title="Kheiroton-IA"
         titleClassName="text-[clamp(1.875rem,10vw,6rem)] leading-[0.9] font-bold tracking-tighter whitespace-nowrap"
         lead={QUESTION}
         leadClassName="mt-8 max-w-2xl text-lg leading-relaxed md:text-xl"
+        mascot="reflechit-perplexe"
       />
       <SituationTacheSection />
       <BalanceSection />

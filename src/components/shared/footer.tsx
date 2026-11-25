@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Label } from "@/components/system";
+import { Label, MascotEmoji } from "@/components/system";
 
 // These pages render their own footer inline, sized so the page and the
 // footer together fill exactly one screen with nothing to scroll to — the
@@ -24,8 +24,10 @@ export function Footer() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="ml-auto cursor-pointer transition-opacity duration-300 hover:opacity-70"
+          className="ml-auto flex cursor-pointer items-center gap-3 self-center transition-opacity duration-300 hover:opacity-70"
         >
+          {/* Le clin d'œil caché : présent partout, il ne prend jamais la parole. */}
+          <MascotEmoji emoji="clin" className="h-6 w-6" />
           <Label>↑ haut de page</Label>
         </button>
       </div>

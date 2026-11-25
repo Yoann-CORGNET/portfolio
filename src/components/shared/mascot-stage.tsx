@@ -9,7 +9,9 @@ import { MASCOT_SPIN, type MascotFaceId } from "@/lib/design/mascot-shapes";
 import { FLAT_RGB, MOTION } from "@/lib/design/tokens";
 import {
   MASCOT_POSES,
+  STILL,
   buildMascot,
+  type Gait,
   type Joints,
   type MascotPoseId,
   type MascotRig,
@@ -26,7 +28,7 @@ import {
 
 type ThreeModule = typeof Three;
 type Vec3 = readonly [number, number, number];
-type Framing = "full" | "head";
+type Framing = "full" | "front" | "head";
 
 const STATE_MS = MOTION.find((m) => m.name === "state")?.ms ?? 500;
 const SPIN_STEP_MS = MASCOT_SPIN.ms / MASCOT_SPIN.steps;
@@ -62,11 +64,22 @@ const LIGHTING = {
 /** D'où la caméra regarde, et à combien de fois le rayon du modèle. */
 const FRAMING: Record<Framing, { direction: Vec3; distance: number }> = {
   full: { direction: [1, 0.55, 1.25], distance: 1.35 },
+  // Presque de face, un rien de biais pour garder le volume : un personnage
+  // qui s'adresse au lecteur, dans les headers de projet.
+  front: { direction: [0.35, 0.35, 1.25], distance: 1.35 },
   head: { direction: [0.38, 0.12, 0.92], distance: 1.25 },
 };
 
 /** Marge avant l'écran à laquelle une scène différée commence à se monter. */
 const DEFER_MARGIN = "200px";
+
+/** Pas par seconde : un petit robot trotte. */
+const CADENCE = 3.2;
+/**
+ * Le cap en marche : de profil vers la gauche (-π/2), ramené d'un quart de
+ * radian vers le lecteur pour que le visage reste lisible.
+ */
+const WALK_HEADING = -Math.PI / 2 + 0.25;
 
 const JOINT_KEYS = ["yaw", "tilt", "pitch", "armL", "armR", "fwdL", "fwdR", "antenna"] as const;
 
@@ -75,19 +88,31 @@ function jointsOf(pose: MascotPoseId): Joints {
   return Object.fromEntries(JOINT_KEYS.map((key) => [key, p[key]])) as Joints;
 }
 
+/**
+ * L'allure de l'entrée : 0,6 de vitesse constante, 0,4 de ralenti. Il part
+ * hors champ un peu plus vite et arrive à 60 % de sa vitesse, sans arrêt sec
+ * ni piétinement sur place.
+ */
+const travel = (p: number) => 0.6 * p + 0.4 * (1 - (1 - p) ** 2);
+
+/** Plus long pas de temps accepté par image, pour qu'un ralenti ne fasse pas sauter l'entrée. */
+const MAX_FRAME_MS = 50;
+
 const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 /* ------------------------------------------------------------------ */
 /* Construction de la scène                                           */
 /* ------------------------------------------------------------------ */
 
-function createRenderer(THREE: ThreeModule, host: HTMLElement) {
+function createRenderer(THREE: ThreeModule, host: HTMLElement, interactive: boolean) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.domElement.className =
-    "absolute inset-0 block h-full w-full cursor-grab active:cursor-grabbing";
+  renderer.domElement.className = cn(
+    "absolute inset-0 block h-full w-full",
+    interactive ? "cursor-grab active:cursor-grabbing" : "pointer-events-none",
+  );
   host.appendChild(renderer.domElement);
   return renderer;
 }
@@ -200,18 +225,23 @@ type Scene = {
   render: () => void;
   rig: MascotRig;
   joints: Joints;
+  gait: Gait;
   /** Faux tant que la première pose n'est pas posée : elle arrive sans transition. */
   posed: boolean;
   dispose: () => void;
 };
 
-async function mountScene(host: HTMLElement, framing: Framing): Promise<Scene> {
+async function mountScene(
+  host: HTMLElement,
+  framing: Framing,
+  interactive: boolean,
+): Promise<Scene> {
   const [THREE, { OrbitControls: Controls }] = await Promise.all([
     import("three"),
     import("three/examples/jsm/controls/OrbitControls.js"),
   ]);
 
-  const renderer = createRenderer(THREE, host);
+  const renderer = createRenderer(THREE, host, interactive);
   const world = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 500);
   const key = addLights(THREE, world);
@@ -226,6 +256,9 @@ async function mountScene(host: HTMLElement, framing: Framing): Promise<Scene> {
   controls.enableZoom = false;
   controls.enablePan = false;
   controls.maxPolarAngle = Math.PI / 2 - 0.05;
+  // Décoratif, la scène ne se laisse pas tourner : les contrôles ne servent
+  // plus qu'à pointer la caméra sur le modèle.
+  controls.enabled = interactive;
   controls.addEventListener("change", render);
 
   frameModel(THREE, { root: rig.root, framing, camera, controls, key, floor });
@@ -236,6 +269,7 @@ async function mountScene(host: HTMLElement, framing: Framing): Promise<Scene> {
     render,
     rig,
     joints: jointsOf("repos"),
+    gait: STILL,
     posed: false,
     dispose: () => {
       stopFollowing();
@@ -267,6 +301,10 @@ export function MascotStage({
   pose = "repos",
   face,
   deferred = false,
+  interactive = true,
+  walkIn,
+  onReady,
+  onArrived,
   label,
   className,
   ref,
@@ -281,6 +319,18 @@ export function MascotStage({
    * atteinte ne coûte rien.
    */
   deferred?: boolean;
+  /** Faux pour une scène décorative : ni rotation à la souris, ni curseur de prise. */
+  interactive?: boolean;
+  /**
+   * Entre en marchant par la droite : la scène part à `distance` fois sa
+   * largeur de sa place et la rejoint en `ms`. À ne pas passer quand le
+   * mouvement est réduit.
+   */
+  walkIn?: Readonly<{ distance: number; ms: number }>;
+  /** Appelé quand la marche d'entrée atteint sa place, avant qu'il se tourne. */
+  onArrived?: () => void;
+  /** Appelé quand le modèle est affiché dans sa première pose. */
+  onReady?: () => void;
   label: string;
   className?: string;
   ref?: React.Ref<MascotStageHandle>;
@@ -290,6 +340,13 @@ export function MascotStage({
   const [near, setNear] = useState(!deferred);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  // Le rappel peut changer à chaque rendu sans remonter la scène.
+  const onReadyRef = useRef(onReady);
+  const onArrivedRef = useRef(onArrived);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+    onArrivedRef.current = onArrived;
+  });
 
   // L'exporteur n'est chargé qu'au premier téléchargement, pas avec la scène.
   useImperativeHandle(ref, () => ({
@@ -325,7 +382,7 @@ export function MascotStage({
     if (!near || !el) return;
     let cancelled = false;
 
-    mountScene(el, framing)
+    mountScene(el, framing, interactive)
       .then((mounted) => {
         if (cancelled) {
           mounted.dispose();
@@ -344,14 +401,62 @@ export function MascotStage({
       scene.current = null;
       setReady(false);
     };
-  }, [framing, near]);
+  }, [framing, near, interactive]);
+
+  /* Entrée en marchant. Une seule horloge mène le déplacement et le pas :
+     la phase des jambes se déduit de la distance parcourue, donc les pieds
+     suivent le sol même quand l'allure ralentit, et la marche finit sur un
+     nombre entier de pas, jambes jointes, pile à l'arrivée. Une image en
+     retard (compilation, onglet chargé) n'avance le temps que de
+     MAX_FRAME_MS : l'entrée prend un peu plus longtemps, sans saut. Arrivé,
+     il se tourne vers le lecteur sur la durée « state ». Déclaré avant la
+     pose, pour que la première image le montre déjà de profil. */
+  useEffect(() => {
+    const s = scene.current;
+    const el = host.current;
+    if (!ready || !s || !el || !walkIn) return;
+    const { distance, ms } = walkIn;
+    const steps = Math.max(1, Math.round((ms / 1000) * CADENCE));
+
+    const place = (p: number) => {
+      const d = travel(p);
+      el.style.transform = `translateX(${(distance * 100 * (1 - d)).toFixed(3)}%)`;
+      s.gait = { phase: d * steps * Math.PI, weight: 1, heading: WALK_HEADING };
+      s.rig.setGait(s.gait);
+    };
+    place(0);
+
+    let progress = 0;
+    let turned = 0;
+    let last: number | null = null;
+    let frame = 0;
+    const tick = (now: number) => {
+      const dt = last === null ? 0 : Math.min(now - last, MAX_FRAME_MS);
+      last = now;
+      if (progress < 1) {
+        progress = Math.min(progress + dt / ms, 1);
+        place(progress);
+        if (progress === 1) onArrivedRef.current?.();
+      } else {
+        turned = Math.min(turned + dt / STATE_MS, 1);
+        const k = 1 - ease(turned);
+        s.gait = { ...s.gait, weight: k, heading: WALK_HEADING * k };
+        s.rig.setGait(s.gait);
+      }
+      s.render();
+      if (turned < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [ready, walkIn]);
 
   /* Pose et visage : on interpole les articulations sur la durée « state ». */
   useEffect(() => {
     const s = scene.current;
     if (!ready || !s) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const instant = reduce || !s.posed;
+    const first = !s.posed;
+    const instant = reduce || first;
     s.posed = true;
 
     s.rig.setFace(face ?? MASCOT_POSES[pose].face);
@@ -378,6 +483,7 @@ export function MascotStage({
       if (t < 1) frame = requestAnimationFrame(step);
     };
     frame = requestAnimationFrame(step);
+    if (first) onReadyRef.current?.();
 
     // Le chargement tourne par crans, au rythme de sa version à plat.
     let timer: number | undefined;
@@ -396,7 +502,14 @@ export function MascotStage({
   }, [ready, pose, face]);
 
   return (
-    <div ref={host} role="img" aria-label={label} className={cn("relative", className)}>
+    <div
+      ref={host}
+      role="img"
+      aria-label={label}
+      className={cn("relative", className)}
+      // Hors champ dès le premier rendu ; la marche prend ensuite la main.
+      style={walkIn ? { transform: `translateX(${walkIn.distance * 100}%)` } : undefined}
+    >
       {failed && (
         <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
           <Label>la scène 3D n&apos;a pas pu se charger</Label>

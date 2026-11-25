@@ -129,10 +129,28 @@ export const MASCOT_POSE_IDS = Object.keys(MASCOT_POSES) as MascotPoseId[];
 /** Les articulations qu'une pose fait bouger, sans le visage. */
 export type Joints = Omit<MascotPose, "label" | "face">;
 
+/**
+ * La marche : où en est le pas (en radians, π par pas), son ampleur de 0
+ * (immobile) à 1, et le cap du corps autour de la verticale (0 : face au
+ * lecteur).
+ */
+export type Gait = { phase: number; weight: number; heading: number };
+
+export const STILL: Gait = { phase: 0, weight: 0, heading: 0 };
+
+/**
+ * L'ampleur du pas, en radians. À 0,6 rad, la jambe (7,5 cm jusqu'à la
+ * semelle) avance le pied de 8,5 cm par pas. Le robot jette un œil au
+ * lecteur en marchant (`glance`), et se dandine un peu (`sway`).
+ */
+const STRIDE = { hip: 0.6, lift: 0.012, arm: 0.5, sway: 0.05, glance: 0.45 } as const;
+
 export type MascotRig = {
   root: Three.Group;
   setFace: (face: MascotFaceId) => void;
   setJoints: (joints: Joints) => void;
+  /** La marche, superposée à la pose. */
+  setGait: (gait: Gait) => void;
   /** Le groupe qui tourne quand le visage est « chargement », sinon null. */
   spinner: () => Three.Group | null;
   dispose: () => void;
@@ -188,12 +206,14 @@ export function buildMascot(THREE: ThreeModule, { headOnly = false } = {}): Masc
   root.name = "prompt";
   const y0 = FOOT_H + LEG_H;
 
-  /* Jambes et pieds */
+  /* Jambes et pieds, accrochés à une hanche pour pouvoir marcher */
+  const hips: Record<"L" | "R", Three.Group> = {} as Record<"L" | "R", Three.Group>;
   for (const s of [-1, 1]) {
     const side = s < 0 ? "L" : "R";
-    const x = s * BODY.w * 0.28;
-    box(`foot_${side}`, "ink", [0.075, FOOT_H, 0.11], [x, FOOT_H / 2, 0.012], root);
-    box(`leg_${side}`, "charcoal", [0.04, LEG_H, 0.04], [x, FOOT_H + LEG_H / 2, 0], root);
+    const hip = group(`hip_${side}`, root, s * BODY.w * 0.28, y0, 0);
+    box(`foot_${side}`, "ink", [0.075, FOOT_H, 0.11], [0, -LEG_H - FOOT_H / 2, 0.012], hip);
+    box(`leg_${side}`, "charcoal", [0.04, LEG_H, 0.04], [0, -LEG_H / 2, 0], hip);
+    hips[side] = hip;
   }
 
   /* Corps : le serveur */
@@ -352,11 +372,41 @@ export function buildMascot(THREE: ThreeModule, { headOnly = false } = {}): Masc
     current = face;
   };
 
-  const setJoints = (j: Joints) => {
-    head.rotation.set(j.pitch, j.yaw, j.tilt);
-    arms.L.rotation.set(j.fwdL, 0, -j.armL);
-    arms.R.rotation.set(j.fwdR, 0, j.armR);
+  let joints: Joints = MASCOT_POSES.repos;
+  let gait: Gait = STILL;
+
+  /* La pose, et la marche par-dessus. Le pied d'appui reste au sol : quand
+     les jambes s'écartent, elles se raccourcissent en hauteur, et tout le
+     corps descend d'autant. La jambe qui passe devant se soulève. */
+  const apply = () => {
+    const j = joints;
+    const { phase, weight, heading } = gait;
+    const swing = STRIDE.hip * weight * Math.sin(phase);
+    const lift = STRIDE.lift * weight * Math.cos(phase);
+    const arm = STRIDE.arm * weight * Math.sin(phase);
+
+    root.rotation.y = heading;
+    root.position.y = -(LEG_H + FOOT_H) * (1 - Math.cos(swing));
+    hips.L.rotation.x = -swing;
+    hips.R.rotation.x = swing;
+    hips.L.position.y = y0 + Math.max(0, lift);
+    hips.R.position.y = y0 + Math.max(0, -lift);
+    torso.rotation.z = STRIDE.sway * weight * Math.sin(phase);
+
+    head.rotation.set(j.pitch, j.yaw + STRIDE.glance * weight, j.tilt);
+    arms.L.rotation.set(j.fwdL + arm, 0, -j.armL);
+    arms.R.rotation.set(j.fwdR - arm, 0, j.armR);
     antenna.rotation.z = j.antenna;
+  };
+
+  const setJoints = (j: Joints) => {
+    joints = j;
+    apply();
+  };
+
+  const setGait = (g: Gait) => {
+    gait = g;
+    apply();
   };
 
   setFace("heureux");
@@ -376,6 +426,7 @@ export function buildMascot(THREE: ThreeModule, { headOnly = false } = {}): Masc
     root: model,
     setFace,
     setJoints,
+    setGait,
     spinner: () => spinner,
     dispose: () => {
       clearFace();

@@ -2,7 +2,12 @@
 
 import { Resend } from "resend";
 import { logger } from "@/lib/logger";
-import { validateAll, type ContactField, type ContactState } from "@/lib/contact-state";
+import {
+  CONTACT_INCOMPLETE,
+  validateAll,
+  type ContactField,
+  type ContactState,
+} from "@/lib/contact-state";
 
 // Both addresses come from the environment, not from source. This repo is
 // public, so a recipient committed here is a recipient harvested off
@@ -102,7 +107,7 @@ export async function sendMessage(
       { event: "contact.validation_failed", fields: Object.keys(errors) },
       "Contact form submitted with invalid fields",
     );
-    return { status: "error", message: "Le formulaire n'est pas complet.", errors };
+    return { status: "error", message: CONTACT_INCOMPLETE, errors };
   }
 
   const payload = payloadOf(values);

@@ -24,6 +24,7 @@ export default function Page() {
         lead="Comment apprend-on à faire du logiciel ?"
         leadClassName="mt-8 max-w-2xl text-lg leading-relaxed"
         leadStyle={{ opacity: 0.82 }}
+        mascot="coucou-heureux"
       />
       <HeritageSection />
       <StackSection />

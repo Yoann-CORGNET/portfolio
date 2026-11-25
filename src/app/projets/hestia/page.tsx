@@ -43,6 +43,7 @@ export default function Page() {
         titleClassName="text-[clamp(3rem,11vw,7.5rem)] leading-[0.85] font-bold tracking-tighter"
         lead={HERO.thesis}
         leadClassName="mt-10 max-w-3xl font-heading text-[clamp(1.5rem,4vw,2.5rem)] leading-[1.02] font-bold tracking-tighter"
+        mascot="victoire-surpris"
       />
 
       {/* Le décor avant la bande générative, pas après : la thèse nomme, le

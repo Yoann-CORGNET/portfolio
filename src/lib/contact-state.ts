@@ -13,6 +13,9 @@ export type ContactState = {
 
 export const CONTACT_IDLE: ContactState = { status: "idle", message: "", errors: {} };
 
+/** Partagé : le client bloque l'envoi avec le même mot que le serveur. */
+export const CONTACT_INCOMPLETE = "Le formulaire n'est pas complet.";
+
 // Loose on purpose: only rejects what obviously isn't an address. A
 // stricter regex fails in the costly direction — rejecting real addresses.
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

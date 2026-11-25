@@ -1,8 +1,10 @@
-import { Action, Label, Rule } from "@/components/system";
+import { Action, Label, MascotHead, Rule } from "@/components/system";
 
 export default function NotFound() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
+      {/* « Page introuvable » est l'usage déclaré de cette expression. */}
+      <MascotHead face="triste" className="mb-8 w-28" />
       <Label tone="accent">Erreur</Label>
       <h1 className="mt-6 text-[clamp(4rem,20vw,10rem)] font-bold leading-[0.82] tracking-tighter">
         404

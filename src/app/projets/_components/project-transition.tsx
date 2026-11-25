@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Label, Rule } from "@/components/system";
+import { Label, MascotEmoji, Rule } from "@/components/system";
 import { FLAT } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 
@@ -57,14 +57,13 @@ export function ProjectTransition({ current }: Readonly<{ current: string }>) {
               <p className="max-w-2xl leading-relaxed text-muted-foreground">{handoff.lead}</p>
             )}
 
-            <p
-              className={cn(
-                "max-w-3xl text-[clamp(1.375rem,3.6vw,2.5rem)] font-bold leading-[1.05] tracking-tighter",
-                handoff.lead && "mt-8",
-              )}
-            >
-              {handoff.question}
-            </p>
+            {/* Prompt pose la question avec le lecteur, sur chacune des pages. */}
+            <div className={cn("flex items-start gap-5", handoff.lead && "mt-8")}>
+              <MascotEmoji emoji="perplexe" className="mt-1 h-10 w-10" />
+              <p className="max-w-3xl text-[clamp(1.375rem,3.6vw,2.5rem)] font-bold leading-[1.05] tracking-tighter">
+                {handoff.question}
+              </p>
+            </div>
 
             <div className="mt-12">
               <Rule />

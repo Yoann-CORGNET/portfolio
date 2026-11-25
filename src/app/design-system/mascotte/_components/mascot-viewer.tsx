@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import { Action, Label, Segmented } from "@/components/system";
 import { MASCOT_FACES, MASCOT_FACE_IDS, type MascotFaceId } from "@/lib/design/mascot-shapes";
-import { MASCOT_POSES, MASCOT_POSE_IDS, type MascotPoseId } from "./mascot-model";
-import { MascotStage, type MascotStageHandle } from "./mascot-stage";
+import { MASCOT_POSES, MASCOT_POSE_IDS, type MascotPoseId } from "@/components/shared/mascot-model";
+import { MascotStage, type MascotStageHandle } from "@/components/shared/mascot-stage";
 
 /** Une bascule du système, avec son nom, pilotée par une valeur. */
 function Choice<T extends string>({
