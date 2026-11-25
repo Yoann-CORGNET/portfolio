@@ -11,7 +11,7 @@ import {
   type MascotEmojiId,
 } from "@/lib/design/mascot-shapes";
 import { FLAT, type FlatToken } from "@/lib/design/tokens";
-import { MascotStage } from "./_components/mascot-stage";
+import { MascotStage } from "@/components/shared/mascot-stage";
 import { MascotViewer } from "./_components/mascot-viewer";
 
 export const metadata: Metadata = {

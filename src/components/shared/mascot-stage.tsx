@@ -26,7 +26,7 @@ import {
 
 type ThreeModule = typeof Three;
 type Vec3 = readonly [number, number, number];
-type Framing = "full" | "head";
+type Framing = "full" | "front" | "head";
 
 const STATE_MS = MOTION.find((m) => m.name === "state")?.ms ?? 500;
 const SPIN_STEP_MS = MASCOT_SPIN.ms / MASCOT_SPIN.steps;
@@ -62,6 +62,9 @@ const LIGHTING = {
 /** D'où la caméra regarde, et à combien de fois le rayon du modèle. */
 const FRAMING: Record<Framing, { direction: Vec3; distance: number }> = {
   full: { direction: [1, 0.55, 1.25], distance: 1.35 },
+  // Presque de face, un rien de biais pour garder le volume : un personnage
+  // qui s'adresse au lecteur, dans les headers de projet.
+  front: { direction: [0.35, 0.35, 1.25], distance: 1.35 },
   head: { direction: [0.38, 0.12, 0.92], distance: 1.25 },
 };
 
@@ -81,13 +84,15 @@ const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 /* Construction de la scène                                           */
 /* ------------------------------------------------------------------ */
 
-function createRenderer(THREE: ThreeModule, host: HTMLElement) {
+function createRenderer(THREE: ThreeModule, host: HTMLElement, interactive: boolean) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.domElement.className =
-    "absolute inset-0 block h-full w-full cursor-grab active:cursor-grabbing";
+  renderer.domElement.className = cn(
+    "absolute inset-0 block h-full w-full",
+    interactive ? "cursor-grab active:cursor-grabbing" : "pointer-events-none",
+  );
   host.appendChild(renderer.domElement);
   return renderer;
 }
@@ -205,13 +210,17 @@ type Scene = {
   dispose: () => void;
 };
 
-async function mountScene(host: HTMLElement, framing: Framing): Promise<Scene> {
+async function mountScene(
+  host: HTMLElement,
+  framing: Framing,
+  interactive: boolean,
+): Promise<Scene> {
   const [THREE, { OrbitControls: Controls }] = await Promise.all([
     import("three"),
     import("three/examples/jsm/controls/OrbitControls.js"),
   ]);
 
-  const renderer = createRenderer(THREE, host);
+  const renderer = createRenderer(THREE, host, interactive);
   const world = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 500);
   const key = addLights(THREE, world);
@@ -226,6 +235,9 @@ async function mountScene(host: HTMLElement, framing: Framing): Promise<Scene> {
   controls.enableZoom = false;
   controls.enablePan = false;
   controls.maxPolarAngle = Math.PI / 2 - 0.05;
+  // Décoratif, la scène ne se laisse pas tourner : les contrôles ne servent
+  // plus qu'à pointer la caméra sur le modèle.
+  controls.enabled = interactive;
   controls.addEventListener("change", render);
 
   frameModel(THREE, { root: rig.root, framing, camera, controls, key, floor });
@@ -267,6 +279,8 @@ export function MascotStage({
   pose = "repos",
   face,
   deferred = false,
+  interactive = true,
+  onReady,
   label,
   className,
   ref,
@@ -281,6 +295,10 @@ export function MascotStage({
    * atteinte ne coûte rien.
    */
   deferred?: boolean;
+  /** Faux pour une scène décorative : ni rotation à la souris, ni curseur de prise. */
+  interactive?: boolean;
+  /** Appelé quand le modèle est affiché dans sa première pose. */
+  onReady?: () => void;
   label: string;
   className?: string;
   ref?: React.Ref<MascotStageHandle>;
@@ -290,6 +308,11 @@ export function MascotStage({
   const [near, setNear] = useState(!deferred);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  // Le rappel peut changer à chaque rendu sans remonter la scène.
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  });
 
   // L'exporteur n'est chargé qu'au premier téléchargement, pas avec la scène.
   useImperativeHandle(ref, () => ({
@@ -325,7 +348,7 @@ export function MascotStage({
     if (!near || !el) return;
     let cancelled = false;
 
-    mountScene(el, framing)
+    mountScene(el, framing, interactive)
       .then((mounted) => {
         if (cancelled) {
           mounted.dispose();
@@ -344,14 +367,15 @@ export function MascotStage({
       scene.current = null;
       setReady(false);
     };
-  }, [framing, near]);
+  }, [framing, near, interactive]);
 
   /* Pose et visage : on interpole les articulations sur la durée « state ». */
   useEffect(() => {
     const s = scene.current;
     if (!ready || !s) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const instant = reduce || !s.posed;
+    const first = !s.posed;
+    const instant = reduce || first;
     s.posed = true;
 
     s.rig.setFace(face ?? MASCOT_POSES[pose].face);
@@ -378,6 +402,7 @@ export function MascotStage({
       if (t < 1) frame = requestAnimationFrame(step);
     };
     frame = requestAnimationFrame(step);
+    if (first) onReadyRef.current?.();
 
     // Le chargement tourne par crans, au rythme de sa version à plat.
     let timer: number | undefined;

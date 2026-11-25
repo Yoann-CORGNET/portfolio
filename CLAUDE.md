@@ -43,8 +43,10 @@ Next.js App Router:
 - `/design-system` — The house design system: foundations, then every component with its variants
   and props. Generated from `src/lib/design/registry.ts`.
 - `/design-system/layouts` — Thirteen compositions built with that library.
-- `/design-system/mascotte` — Prompt, the mascot: rules, expressions, levels of detail. The 3D model
-  (`three`, loaded on this route only) lives in the route's own `_components/`.
+- `/design-system/mascotte` — Prompt, the mascot: rules, expressions, levels of detail. The 3D scene
+  (`mascot-stage.tsx`, `mascot-model.ts`) lives in `src/components/shared/` because project heroes
+  use it too; `three` is imported dynamically by the stage, so it loads only on pages that mount
+  one.
 
 Navigation on the homepage uses anchor-based scrolling (`#demarche`, `#travail`, `#contact`).
 

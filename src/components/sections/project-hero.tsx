@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { FlatBlock, Label } from "@/components/system";
 import type { FlatToken } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
+import { ProjectHeroMascot, type MascotScene } from "./project-hero-mascot";
 
 /**
  * The shared skeleton behind every project's opening block: a flat panel
@@ -24,6 +25,7 @@ export function ProjectHero({
   leadClassName,
   leadStyle,
   body,
+  mascot,
 }: Readonly<{
   tone: FlatToken;
   /** Overlay the dot screen on the panel. */
@@ -41,6 +43,11 @@ export function ProjectHero({
   leadStyle?: CSSProperties;
   /** Extra content below the lead paragraph, already styled by the caller. */
   body?: ReactNode;
+  /**
+   * Prompt comes in from the right and takes the project's pose: over the
+   * right of the block on wide screens, below the lead otherwise.
+   */
+  mascot?: MascotScene;
 }>) {
   const panel = (
     <FlatBlock tone={tone} dots={dots} className={blockClassName}>
@@ -57,9 +64,28 @@ export function ProjectHero({
           </p>
         ) : null}
         {body}
+        {mascot && <ProjectHeroMascot scene={mascot} placement="inline" />}
       </div>
     </FlatBlock>
   );
 
-  return section ? <section className="border-b border-border">{panel}</section> : panel;
+  // The wide placement is positioned against this box, so it needs one even
+  // without `section`.
+  const layer = mascot && <ProjectHeroMascot scene={mascot} placement="layer" />;
+  if (section) {
+    return (
+      <section className="relative border-b border-border">
+        {panel}
+        {layer}
+      </section>
+    );
+  }
+  return layer ? (
+    <div className="relative">
+      {panel}
+      {layer}
+    </div>
+  ) : (
+    panel
+  );
 }

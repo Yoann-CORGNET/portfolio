@@ -59,5 +59,3 @@ export const LAYERS: readonly Layer[] = [
 
 /** Distance dont le filet se décale d'une couche à la suivante ; alimente `--depth` dans `Stratum`. */
 export const STEP_REM = 2;
-
-export const HERO_STEP_REM = STEP_REM / 4;

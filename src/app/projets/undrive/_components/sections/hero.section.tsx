@@ -1,11 +1,21 @@
 import { FlatBlock, Label } from "@/components/system";
-import { LAYERS, HERO_STEP_REM } from "../layers";
+import { ProjectHeroMascot } from "@/components/sections/project-hero-mascot";
 
+/**
+ * Le header d'Undrive ne passe pas par `ProjectHero` (le label « chantier » et
+ * le paragraphe de cadrage lui sont propres), mais il reçoit Prompt de la même
+ * façon : par-dessus le bloc sur grand écran, sous le texte sinon.
+ */
 export function HeroSection() {
   return (
-    <FlatBlock tone="petrol" className="py-20 md:py-32">
-      <div className="mx-auto grid max-w-6xl gap-14 px-6 md:grid-cols-12 md:gap-10">
-        <div className="md:col-span-7">
+    <section className="relative">
+      {/* Même hauteur que les headers de Hestia et Kheiroton-IA : un plancher en
+          vh, le contenu centré dedans. */}
+      <FlatBlock
+        tone="petrol"
+        className="flex min-h-[60vh] flex-col justify-center py-24 md:min-h-[72vh] md:py-32"
+      >
+        <div className="mx-auto max-w-6xl px-6">
           <Label tone="inherit" className="opacity-70">
             chantier
           </Label>
@@ -19,32 +29,10 @@ export function HeroSection() {
             Projet d&apos;école de quatrième année, mené en équipe. Aucun voyageur ne s&apos;en est
             jamais servi : ce qui se juge ici est la chaîne, pas son audience.
           </p>
+          <ProjectHeroMascot scene="victoire-clin" placement="inline" />
         </div>
-
-        <div className="md:col-span-5 md:pt-2">
-          <Label tone="inherit" className="opacity-55">
-            la coupe
-          </Label>
-          <ol className="mt-6 border-l border-current/30 pl-6">
-            {LAYERS.map((layer, i) => (
-              <li
-                key={layer.index}
-                className="flex items-baseline gap-4 py-2.5"
-                // Décrochement calculé par ligne, donc inline : Tailwind ne
-                // construit pas de classe dynamiquement à l'exécution.
-                style={{ marginLeft: `${i * HERO_STEP_REM}rem` }}
-              >
-                <Label tone="inherit" numeric className="opacity-45">
-                  {layer.index}
-                </Label>
-                <span className="text-lg tracking-tight" style={{ opacity: 0.8 }}>
-                  {layer.title}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </FlatBlock>
+      </FlatBlock>
+      <ProjectHeroMascot scene="victoire-clin" placement="layer" />
+    </section>
   );
 }
