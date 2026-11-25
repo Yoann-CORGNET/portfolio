@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.10.0...v0.11.0) (2026-11-25)
+
+
+### Features
+
+* **design-system:** add Prompt mascot page with 3D model, expressions, symbol and emojis ([b2f8f9b](https://github.com/Yoann-CORGNET/portfolio/commit/b2f8f9b2f419c7880788295fdb2e0711ba5b0536))
+* **design-system:** add Prompt mascot page with 3D model, expressions, symbol and emojis ([c76ed85](https://github.com/Yoann-CORGNET/portfolio/commit/c76ed85ced9d910ae8d94f530bf136c32e989321))
+
 ## [0.10.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.9.0...v0.10.0) (2026-11-03)
 
 
