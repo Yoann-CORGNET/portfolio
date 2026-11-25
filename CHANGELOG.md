@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.1](https://github.com/Yoann-CORGNET/portfolio/compare/v0.13.0...v0.13.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **ci:** pass the package version to Sonar so new code starts at the previous release ([8bf845a](https://github.com/Yoann-CORGNET/portfolio/commit/8bf845a9c58a3baf2a073859c0a4f155368aa279))
+* **ci:** pass the package version to Sonar so new code starts at the previous release ([02ca1f5](https://github.com/Yoann-CORGNET/portfolio/commit/02ca1f5526fe38671745ef0640b529f43002b6ae))
+
 ## [0.13.0](https://github.com/Yoann-CORGNET/portfolio/compare/v0.12.0...v0.13.0) (2026-11-25)
 
 
