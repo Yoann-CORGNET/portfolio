@@ -1,15 +1,17 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
-import { Action, Label } from "@/components/system";
+import { Action, Label, MascotEmoji } from "@/components/system";
 import { sendMessage } from "@/lib/contact-action";
 import {
   CONTACT_IDLE,
+  CONTACT_INCOMPLETE,
+  validateAll,
   validateField,
   type ContactField,
   type ContactState,
 } from "@/lib/contact-state";
+import { MASCOT_SPIN, type MascotEmojiId } from "@/lib/design/mascot-shapes";
 import { FLAT } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 
@@ -165,32 +167,60 @@ function Honeypot() {
 /* Le formulaire                                                      */
 /* ------------------------------------------------------------------ */
 
-function Status({ state }: Readonly<{ state: ContactState }>) {
-  if (state.status === "ok") {
-    return (
-      <p
-        aria-live="polite"
-        className="flex min-h-[1.25rem] items-center gap-2 text-sm font-medium"
-        style={{ color: "var(--f-ok)" }}
-      >
-        <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
-        {state.message}
-      </p>
-    );
+/**
+ * Prompt dit l'état de l'envoi, chaque fois avec l'expression dont c'est
+ * l'usage déclaré : un champ refusé le laisse perplexe, une panne côté
+ * serveur affiche l'erreur. L'emoji fait 20 px, son plancher, et la hauteur
+ * de la ligne : il apparaît sans rien faire bouger. Le texte dit déjà
+ * l'état, l'emoji se tait pour les lecteurs d'écran.
+ */
+function statusFace(state: ContactState, pending: boolean): MascotEmojiId | null {
+  if (pending) return "chargement";
+  if (state.status === "ok") return "heureux";
+  if (state.status === "error") {
+    return Object.keys(state.errors).length > 0 ? "perplexe" : "erreur";
   }
+  return null;
+}
+
+function Status({ state, pending }: Readonly<{ state: ContactState; pending: boolean }>) {
+  const face = statusFace(state, pending);
+  const message = pending ? "Envoi en cours…" : state.message;
+  const ok = !pending && state.status === "ok";
 
   return (
     <p
       aria-live="polite"
-      className="min-h-[1.25rem] text-sm"
+      className={cn("flex min-h-[1.25rem] items-center gap-2 text-sm", ok && "font-medium")}
       style={{
-        color: "var(--f-error)",
-        opacity: state.status === "idle" ? 0 : 1,
+        color: ok || pending ? "var(--f-ok)" : "var(--f-error)",
+        opacity: face ? 1 : 0,
       }}
     >
-      {state.message || "·"}
+      {face && <MascotEmoji emoji={face} className="h-5 w-5" />}
+      {message || "·"}
     </p>
   );
+}
+
+/**
+ * Le chargement fait au moins un tour complet : il tourne par crans, et un
+ * tour coupé se voit. Sans ce plancher, un formulaire refusé (renvoyé avant
+ * tout appel réseau) ferait clignoter Prompt pendant un ou deux crans.
+ */
+const MIN_PENDING_MS = MASCOT_SPIN.ms;
+
+/**
+ * L'attente court en parallèle de l'envoi, elle ne s'y ajoute pas : une
+ * réponse plus lente que le plancher n'est pas retardée. Côté client, pour ne
+ * pas payer du temps de fonction à attendre.
+ */
+async function sendWithFloor(previous: ContactState, data: FormData): Promise<ContactState> {
+  const [result] = await Promise.all([
+    sendMessage(previous, data),
+    new Promise((resolve) => setTimeout(resolve, MIN_PENDING_MS)),
+  ]);
+  return result;
 }
 
 export function ContactForm({
@@ -204,7 +234,7 @@ export function ContactForm({
   aside?: React.ReactNode;
   className?: string;
 }>) {
-  const [state, formAction, pending] = useActionState(sendMessage, CONTACT_IDLE);
+  const [state, formAction, pending] = useActionState(sendWithFloor, CONTACT_IDLE);
 
   // Fields are controlled from here rather than left uncontrolled, so a
   // failed submission — validation error or delivery failure — leaves
@@ -233,6 +263,38 @@ export function ContactForm({
   const errorFor = (field: ContactField) =>
     local[field] !== undefined ? local[field] || undefined : state.errors[field];
 
+  // Un formulaire incomplet ne part pas : le client connaît les mêmes règles
+  // que le serveur, la réponse serait connue d'avance et n'aurait rien à
+  // attendre. Prompt passe à perplexe sans chargement ; le serveur garde sa
+  // propre validation en filet.
+  const [blocked, setBlocked] = useState(false);
+
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    const errors = validateAll({
+      name: values.name.trim(),
+      email: values.email.trim(),
+      message: values.message.trim(),
+    });
+    const invalid = Object.keys(errors).length > 0;
+    setBlocked(invalid);
+    if (!invalid) return;
+    event.preventDefault();
+    setLocal({ name: errors.name ?? "", email: errors.email ?? "", message: errors.message ?? "" });
+  };
+
+  // Le message bloquant s'efface dès que tous les champs sont corrigés, sans
+  // laisser reparaître la réponse précédente du serveur.
+  const localErrors = Object.fromEntries(
+    Object.entries(local).filter(([, error]) => error),
+  ) as ContactState["errors"];
+  const incomplete: ContactState = {
+    status: "error",
+    message: CONTACT_INCOMPLETE,
+    errors: localErrors,
+  };
+  let shown = state;
+  if (blocked) shown = Object.keys(localErrors).length > 0 ? incomplete : CONTACT_IDLE;
+
   // Only a genuine send clears the form — an error, including the throttled
   // one, keeps the text so the visitor isn't asked to retype it.
   const previousStatus = useRef(state.status);
@@ -247,6 +309,7 @@ export function ContactForm({
   return (
     <form
       action={formAction}
+      onSubmit={submit}
       style={SKIN[skin]}
       className={cn("relative flex flex-col gap-6", className)}
       noValidate
@@ -288,7 +351,7 @@ export function ContactForm({
       />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-4">
-          <Status state={state} />
+          <Status state={shown} pending={pending} />
           {aside}
         </div>
         <Action type="submit" size="lg" loading={pending}>
