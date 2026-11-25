@@ -11,9 +11,9 @@ import { MOTION } from "@/lib/design/tokens";
  *
  * Deux placements, et deux supports. Sur grand écran, il se tient en entier
  * dans la partie droite du header, par-dessus la section (`layer`), en 3D :
- * il entre, puis prend sa pose. En dessous, le titre prend toute la largeur :
+ * il marche jusqu'à sa place, se tourne vers le lecteur et prend sa pose. En dessous, le titre prend toute la largeur :
  * il passe dans le flux, sous l'accroche (`inline`), et n'est plus qu'une
- * image fixe de la même scène. three.js, sa compilation et sa mémoire
+ * image fixe de la même scène, qui glisse en place. three.js, sa compilation et sa mémoire
  * graphique coûtent trop sur un téléphone pour un personnage de 250 px.
  *
  * L'entrée attend que le support soit affiché, sinon on verrait glisser une
@@ -21,6 +21,7 @@ import { MOTION } from "@/lib/design/tokens";
  */
 
 const ARRIVAL_MS = MOTION.find((m) => m.name === "arrival")?.ms ?? 900;
+const SLIDE = `${ARRIVAL_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1)`;
 
 /** Le point de rupture `lg` de Tailwind, où le header laisse de la place à droite. */
 const WIDE = "(min-width: 1024px)";
@@ -87,17 +88,15 @@ function useIdle(): boolean {
   return idle;
 }
 
-/** Le glissement d'entrée, commun aux deux supports. */
+/** Le glissement d'entrée de l'image fixe. */
 function Entrance({
   shown,
   reduce,
-  onEntered,
   className,
   children,
 }: Readonly<{
   shown: boolean;
   reduce: boolean;
-  onEntered?: () => void;
   className: string;
   children: React.ReactNode;
 }>) {
@@ -106,44 +105,44 @@ function Entrance({
       className={className}
       style={{
         transform: shown || reduce ? "translateX(0)" : "translateX(130%)",
-        transition: reduce ? undefined : `transform ${ARRIVAL_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
+        transition: reduce ? undefined : `transform ${SLIDE}`,
       }}
-      onTransitionEnd={onEntered}
     >
       {children}
     </div>
   );
 }
 
-/** Grand écran : la scène 3D, montée au calme, qui prend sa pose une fois entrée. */
+/**
+ * La marche d'entrée : la scène part à 130 % de sa largeur, hors du header,
+ * et rejoint sa place en 2,6 s. La cadence est réglée dans `mascot-stage.tsx`.
+ */
+const WALK_IN = { distance: 1.3, ms: 2600 } as const;
+
+/** Grand écran : la scène 3D, montée au calme, qui marche puis prend sa pose. */
 function Volume({ scene }: Readonly<{ scene: MascotScene }>) {
   const { pose: target, face } = SCENES[scene];
   const reduce = useMedia(REDUCE) ?? false;
   const idle = useIdle();
-  const [ready, setReady] = useState(false);
-  const [entered, setEntered] = useState(false);
-  const pose = entered || reduce ? target : "repos";
+  const [arrived, setArrived] = useState(false);
+  const posed = arrived || reduce;
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
-      <Entrance
-        shown={ready}
-        reduce={reduce}
-        onEntered={() => setEntered(true)}
-        className="absolute bottom-0 right-[8%] h-[88%] aspect-[3/4]"
-      >
+      <div className="absolute bottom-0 right-[8%] h-[88%] aspect-[3/4]">
         {idle && (
           <MascotStage
             framing="front"
-            pose={pose}
-            face={entered || reduce ? face : undefined}
+            pose={posed ? target : "repos"}
+            face={posed ? face : undefined}
             interactive={false}
-            onReady={() => setReady(true)}
+            walkIn={reduce ? undefined : WALK_IN}
+            onArrived={() => setArrived(true)}
             label="Prompt"
             className="h-full w-full"
           />
         )}
-      </Entrance>
+      </div>
     </div>
   );
 }
