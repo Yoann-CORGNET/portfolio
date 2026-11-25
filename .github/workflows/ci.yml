@@ -1,7 +1,8 @@
 name: ci
 
 # Also runs on main, not just pull requests: SonarQube Cloud needs the
-# main-branch analysis to know what counts as "new code" on a PR.
+# main-branch analysis to know what counts as "new code" on a PR, and the
+# versioned main analyses to know where the current version's new code starts.
 on:
   push:
     branches:
@@ -57,8 +58,17 @@ jobs:
       - name: Generate the ESLint report
         run: pnpm run lint:report || true
 
+      # Release Please bumps package.json on each release. Passing it on is
+      # what lets the "Previous version" new-code period start at the release:
+      # the scanner does not read package.json on its own.
+      - name: Read the version
+        id: version
+        run: echo "value=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+
       - name: Scan
         uses: SonarSource/sonarqube-scan-action@v8
+        with:
+          args: -Dsonar.projectVersion=${{ steps.version.outputs.value }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
